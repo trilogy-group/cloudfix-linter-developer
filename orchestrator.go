@@ -69,3 +69,7 @@ func parseReccos(reccos []byte) map[string]map[string]string {
 	appLogger.Info().Println("Reccomendation mapping made!")
 	return mapping
 }
+
+func getTagToID() map[string]string {
+
+}
