@@ -2,7 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"os/exec"
+	"strings"
 
+	tfjson "github.com/hashicorp/terraform-json"
 	"github.com/trilogy-group/cloudfix-linter/logger"
 )
 
@@ -70,6 +73,56 @@ func parseReccos(reccos []byte) map[string]map[string]string {
 	return mapping
 }
 
-func getTagToID() map[string]string {
+func getTagToID() (map[string]string, error) {
+	tagToID := make(map[string]string)
+	TfLintOutData, errT := exec.Command("terraform", "show", "-json").Output()
+	if errT != nil {
+		return tagToID, errT
+	}
+	var tfState tfjson.State
+	errU := tfState.UnmarshalJSON(TfLintOutData)
+	if errU != nil {
+		return tagToID, errU
+	}
+	//for root module resources
+	for _, rootResource := range tfState.Values.RootModule.Resources {
+		addPairToTagMap(rootResource, tagToID)
 
+	}
+	// for all the resources present in child modules under the root module
+	for _, childModule := range tfState.Values.RootModule.ChildModules {
+		for _, childResource := range childModule.Resources {
+			addPairToTagMap(childResource, tagToID)
+		}
+	}
+	return tagToID, nil
+}
+
+func addPairToTagMap(resource *tfjson.StateResource, tagToID map[string]string) {
+	AWSResourceIDRaw, ok := resource.AttributeValues["id"]
+	if !ok {
+		//log that id is not present
+		return
+	}
+	AWSResourceID := AWSResourceIDRaw.(string)
+	tagsRaw, ok := resource.AttributeValues["tags"]
+	if !ok {
+		//log that tags are not present
+		return
+	}
+	tags := tagsRaw.(map[string]interface{})
+	yorTagRaw, ok := tags["yor_trace"]
+	if !ok {
+		//log that yor_trace is not present
+		return
+	}
+	yorTag := yorTagRaw.(string)
+	AWSResourceIDStrip := strings.Trim(AWSResourceID, "\n")
+	AWSResourceIDTrim := strings.Trim(AWSResourceIDStrip, `"`)
+	yorTagStrip := strings.Trim(yorTag, "\n")
+	yorTagTrim := strings.Trim(yorTagStrip, `"`)
+	if yorTagTrim == "" || AWSResourceIDTrim == "" {
+		return
+	}
+	tagToID[yorTagTrim] = AWSResourceIDTrim
 }
