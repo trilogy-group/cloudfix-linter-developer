@@ -189,11 +189,6 @@ func main() {
 	}
 	os.Setenv("TagsMapFile", tagFileName)
 	modulesJson, _ := exec.Command("tflint", "--only=module_source", "-f=json").Output()
-	// if errT != nil {
-	// 	//log that tflint is not configured
-	// 	fmt.Print("Tflint is not configured")
-	// 	return
-	// }
 	modulePaths, errM := orches.extractModulePaths(modulesJson)
 	if errM != nil {
 		//log failure in extracting module paths
