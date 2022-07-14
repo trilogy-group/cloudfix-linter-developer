@@ -188,6 +188,16 @@ func main() {
 		panic(errT)
 	}
 	os.Setenv("TagsMapFile", tagFileName)
+	modulesJson, _ := exec.Command("tflint", "--only=module_source", "-f=json").Output()
+	modulePaths, errM := orches.extractModulePaths(modulesJson)
+	if errM != nil {
+		//log failure in extracting module paths
+		return
+	}
 	output, _ := exec.Command("tflint", "--module", "--disable-rule=module_source").Output()
 	fmt.Print(string(output))
+	for _, module := range modulePaths {
+		outputM, _ := exec.Command("tflint", module, "--module", "--disable-rule=module_source").Output()
+		fmt.Print(string(outputM))
+	}
 }
