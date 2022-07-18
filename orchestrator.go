@@ -62,13 +62,13 @@ func (o *Orchestrator) parseReccos(reccos []byte, attrMapping []byte) map[string
 	errR := json.Unmarshal(reccos, &responses) //the reccomendations from cloudfix are being unmarshalled
 	if errR != nil {
 		// add log
-		panic(errR)
+		return mapping
 	}
 	var attrMap map[string]IdealAttributes
 	errM := json.Unmarshal(attrMapping, &attrMap) //the mapping that defines how to parse an oppurtunity type is being unmarshalled here
 	if errM != nil {
 		//add log
-		panic(errM)
+		return mapping
 	}
 	for _, recco := range responses { //iterating through the recommendations one by one
 		awsID := recco.ResourceId
@@ -215,6 +215,10 @@ func main() {
 		}
 	}`)
 	reccosMapping := orches.parseReccos(fileR, attrMapping)
+	if len(reccosMapping) == 0 {
+		//log that no reccomendations could be received
+		//exit gracefully
+	}
 	errP := persist.store_reccos(reccosMapping, reccosFileName)
 	if errP != nil {
 		panic(errP)
