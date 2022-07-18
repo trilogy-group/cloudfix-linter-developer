@@ -139,15 +139,22 @@ func (o *Orchestrator) getTagToID() (map[string]string, error) {
 	if errU != nil {
 		return tagToID, errU
 	}
+	if tfState.Values == nil {
+		//log that no resources have been deployed
+		return tagToID, nil
+	}
 	//for root module resources
 	for _, rootResource := range tfState.Values.RootModule.Resources {
-		o.addPairToTagMap(rootResource, tagToID)
-
+		if rootResource != nil {
+			o.addPairToTagMap(rootResource, tagToID)
+		}
 	}
 	// for all the resources present in child modules under the root module
 	for _, childModule := range tfState.Values.RootModule.ChildModules {
 		for _, childResource := range childModule.Resources {
-			o.addPairToTagMap(childResource, tagToID)
+			if childResource != nil {
+				o.addPairToTagMap(childResource, tagToID)
+			}
 		}
 	}
 	return tagToID, nil
