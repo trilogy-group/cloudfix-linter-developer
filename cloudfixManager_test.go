@@ -372,10 +372,10 @@ var addTests = []Test{
 
 func TestParseReccos(t *testing.T) {
 
-	var orches Orchestrator
+	var cloudfixMan CloudfixManager
 	for _, test := range addTests {
 		expected := test.expected
-		got := orches.parseReccos(test.cloudfixReccos, test.attrMapping)
+		got := cloudfixMan.createMap(test.cloudfixReccos, test.attrMapping)
 		eq := reflect.DeepEqual(got, expected)
 		if !eq {
 			fmt.Print(expected)
