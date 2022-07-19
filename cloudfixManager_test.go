@@ -6,13 +6,13 @@ import (
 	"testing"
 )
 
-type Test struct {
+type TestReccoParser struct {
 	cloudfixReccos []byte
 	attrMapping    []byte
 	expected       map[string]map[string]string
 }
 
-var addTests = []Test{
+var addTestsReccos = []TestReccoParser{
 	{
 		// Test 1 : All known oppurtunity types with both dynamic and static ideal attribute values
 		[]byte(`[
@@ -373,7 +373,7 @@ var addTests = []Test{
 func TestParseReccos(t *testing.T) {
 
 	var cloudfixMan CloudfixManager
-	for _, test := range addTests {
+	for _, test := range addTestsReccos {
 		expected := test.expected
 		got := cloudfixMan.createMap(test.cloudfixReccos, test.attrMapping)
 		eq := reflect.DeepEqual(got, expected)
