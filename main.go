@@ -10,7 +10,7 @@ import (
 var (
 	rootCmd = &cobra.Command{
 		Use:   "cloudfix-linter",
-		Short: "A brief description of your application",
+		Short: "This tool helps flag reccomendations from Cloudfix in your terraform code",
 		Long:  "This tool helps flag reccomendations from Cloudfix in your terraform code",
 	}
 	recccoCmd = &cobra.Command{
@@ -23,7 +23,7 @@ var (
 		},
 	}
 	currptFlag = &cobra.Command{
-		Use:   "addFlags",
+		Use:   "addTags",
 		Short: "Add tags to your terraform code to trace them back to the cloud",
 		Long:  "Add tags to your terraform code to trace them back to the cloud. You will need to run this command if the tool detects that there are no tags for a resource in your terraform code. You will be asked to run this command in that instance",
 		RunE: func(cmd *cobra.Command, args []string) error {
