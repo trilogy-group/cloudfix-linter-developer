@@ -25,6 +25,10 @@ func (o *Orchestrator) extractModulePaths(jsonString []byte) ([]string, error) {
 		Structure: "map(key->string,value->(array of map(key->string,value->interface))"
 	*/
 	var result map[string][]map[string]interface{}
+	if len(jsonString) == 0 {
+		//Empty string has been sent. No modules present
+		return modulePaths, nil
+	}
 	err := json.Unmarshal(jsonString, &result)
 	if err != nil {
 		//appLogger.Error().Println("Failed to unmarshall module paths from json string")
