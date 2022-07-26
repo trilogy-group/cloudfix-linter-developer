@@ -45,7 +45,7 @@ const (
 	GENERIC_ERROR     ErrorCodes = iota //all other cases
 	CRED_ERROR                          //Could not find Creds
 	STORAGE_ERROR                       //Could not store the token
-	UNAUTHCREDS_ERROR                   //Creds found, but server returned 401
+	UNAUTHCREDS_ERROR                   //Creds found, but server said Incorrect Creds
 )
 
 type CloudfixManager struct {
