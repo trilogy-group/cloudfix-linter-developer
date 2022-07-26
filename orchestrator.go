@@ -42,15 +42,20 @@ func (o *Orchestrator) extractModulePaths(jsonString []byte) ([]string, error) {
 }
 
 func (o *Orchestrator) runReccos() {
-
 	var persist Persistance
 	var cloudfixMan CloudfixManager
 	var terraMan TerraformManager
 	reccosFileName := "recos.txt"
-	reccosMapping := cloudfixMan.parseReccos()
+	reccosMapping, errC := cloudfixMan.getReccos()
+	if errC != nil {
+		fmt.Println(errC.message)
+		return
+	}
 	if len(reccosMapping) == 0 {
 		//log that no reccomendations could be received
+		fmt.Println("No oppurtunities exist for your system")
 		//exit gracefully
+		return
 	}
 	errP := persist.store_reccos(reccosMapping, reccosFileName)
 	if errP != nil {

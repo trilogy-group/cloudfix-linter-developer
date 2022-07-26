@@ -2,8 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
-	"os/exec"
+	"net/http"
 	"strings"
 )
 
@@ -38,10 +39,55 @@ type ResponseReccos struct {
 	LastUpdatedDate        string
 }
 
+type ErrorCodes int
+
+const (
+	GENERIC_ERROR     ErrorCodes = iota //all other cases
+	CRED_ERROR                          //Could not find Creds
+	STORAGE_ERROR                       //Could not store the token
+	UNAUTHCREDS_ERROR                   //Creds found, but server returned 401
+)
+
 type CloudfixManager struct {
+	//no data fields required
+}
+
+type customError struct {
+	statusCode ErrorCodes
+	message    string
+}
+
+func (e *customError) Error() string {
+	return e.message
 }
 
 //Member functions follow:
+
+func (c *CloudfixManager) getReccosFromCloudfix(token string) ([]byte, *customError) {
+	var reccos []byte
+	req, err := http.NewRequest("GET", "https://w9lnd111rl.execute-api.us-east-1.amazonaws.com/default/api/v1/ui/recommendations", nil)
+	if err != nil {
+		return reccos, &customError{GENERIC_ERROR, "Internal Error"}
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization", token)
+
+	response, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return reccos, &customError{GENERIC_ERROR, "Internal Error"}
+	}
+	defer response.Body.Close()
+	statusCode := response.StatusCode
+	if statusCode != http.StatusOK {
+		return reccos, &customError{GENERIC_ERROR, "Failed to fetch reccomendations"}
+	}
+	reccos, errI := ioutil.ReadAll(response.Body)
+	if errI != nil {
+		return []byte{}, &customError{GENERIC_ERROR, "Internal Error"}
+	}
+	//fmt.Println(string(reccos))
+	return reccos, nil
+}
 
 func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[string]map[string]string {
 	mapping := map[string]map[string]string{} //this is the map that has to be returned in the end
@@ -95,19 +141,31 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 	return mapping
 }
 
-func (c *CloudfixManager) parseReccos() map[string]map[string]string {
+func (c *CloudfixManager) getReccos() (map[string]map[string]string, *customError) {
 	//function to process the reccomendations from cloudfix and turn that into a map
 	//the structure of the map is resourceID -> Attribute type that needs to be targetted -> Ideal Attribute Value
 	// If there is no attribute that has to be targetted, attribute type would be filled with "NoAttributeMarker" and
 	//Attribute Value would be filled with any message that in the end has to be displayed to the user
-	currPWD, _ := exec.Command("pwd").Output()
-	currPWDStr := string(currPWD[:])
-	currPWDStrip := strings.Trim(currPWDStr, "\n")
-	currPWDStrip += "/reccos.json"
-	reccos, errR := ioutil.ReadFile(currPWDStrip)
-	if errR != nil {
-		//Add Error Log
-		panic(errR)
+
+	var cloudAuth CloudfixAuth
+	mapping := make(map[string]map[string]string)
+	token, errA := cloudAuth.getToken()
+	if errA != nil && errA.statusCode != STORAGE_ERROR {
+		return mapping, errA
+	}
+	// currPWD, _ := exec.Command("pwd").Output()
+	// currPWDStr := string(currPWD[:])
+	// currPWDStrip := strings.Trim(currPWDStr, "\n")
+	// currPWDStrip += "/reccos.json"
+	// reccos, errR := ioutil.ReadFile(currPWDStrip)
+	// if errR != nil {
+	// 	//Add Error Log
+	// 	panic(errR)
+	// }
+	reccos, errT := c.getReccosFromCloudfix(token)
+	if errT != nil {
+		fmt.Println(errT.message)
+		return mapping, errT
 	}
 	attrMapping := []byte(`{
 		"Gp2Gp3": {
@@ -127,6 +185,6 @@ func (c *CloudfixManager) parseReccos() map[string]map[string]string {
 			"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
 		}
 	}`)
-	mapping := c.createMap(reccos, attrMapping)
-	return mapping
+	mapping = c.createMap(reccos, attrMapping)
+	return mapping, nil
 }
