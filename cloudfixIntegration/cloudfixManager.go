@@ -53,12 +53,12 @@ type CloudfixManager struct {
 }
 
 type customError struct {
-	statusCode ErrorCodes
-	message    string
+	StatusCode ErrorCodes
+	Message    string
 }
 
 func (e *customError) Error() string {
-	return e.message
+	return e.Message
 }
 
 //Member functions follow:
@@ -141,7 +141,7 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 	return mapping
 }
 
-func (c *CloudfixManager) getReccos() (map[string]map[string]string, *customError) {
+func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customError) {
 	//function to process the reccomendations from cloudfix and turn that into a map
 	//the structure of the map is resourceID -> Attribute type that needs to be targetted -> Ideal Attribute Value
 	// If there is no attribute that has to be targetted, attribute type would be filled with "NoAttributeMarker" and
@@ -150,7 +150,7 @@ func (c *CloudfixManager) getReccos() (map[string]map[string]string, *customErro
 	var cloudAuth CloudfixAuth
 	mapping := make(map[string]map[string]string)
 	token, errA := cloudAuth.getToken()
-	if errA != nil && errA.statusCode != STORAGE_ERROR {
+	if errA != nil && errA.StatusCode != STORAGE_ERROR {
 		return mapping, errA
 	}
 	// currPWD, _ := exec.Command("pwd").Output()
@@ -164,7 +164,7 @@ func (c *CloudfixManager) getReccos() (map[string]map[string]string, *customErro
 	// }
 	reccos, errT := c.getReccosFromCloudfix(token)
 	if errT != nil {
-		fmt.Println(errT.message)
+		fmt.Println(errT.Message)
 		return mapping, errT
 	}
 	attrMapping := []byte(`{

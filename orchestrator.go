@@ -48,9 +48,9 @@ func (o *Orchestrator) runReccos() {
 	var cloudfixMan cloudfixIntegration.CloudfixManager
 	var terraMan TerraformManager
 	reccosFileName := "recos.txt"
-	reccosMapping, errC := cloudfixMan.getReccos()
+	reccosMapping, errC := cloudfixMan.GetReccos()
 	if errC != nil {
-		fmt.Println(errC.message)
+		fmt.Println(errC.Message)
 		return
 	}
 	if len(reccosMapping) == 0 {
