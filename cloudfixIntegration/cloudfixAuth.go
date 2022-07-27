@@ -85,11 +85,11 @@ func (ca *CloudfixAuth) getToken() (string, *customError) {
 func (ca *CloudfixAuth) handleLogin() ([]byte, *customError) {
 	username, present := os.LookupEnv("CLOUDFIX_USERNAME")
 	if !present {
-		return []byte{}, &customError{CRED_ERROR, "Error retreiving username. Setup environment correctly"}
+		return []byte{}, &customError{CRED_ERROR, "Could not login. Environment Variable CLOUDFIX_USERNAME not present."}
 	}
 	password, present := os.LookupEnv("CLOUDFIX_PASSWORD")
 	if !present {
-		return []byte{}, &customError{CRED_ERROR, "Error retreiving password. Setup environment correctly"}
+		return []byte{}, &customError{CRED_ERROR, "Could not login. Environment Variable CLOUDFIX_PASSWORD not present."}
 	}
 	requestBody := Payload{password, username}
 	requestBodyBytes, err := json.Marshal(requestBody)
@@ -98,7 +98,7 @@ func (ca *CloudfixAuth) handleLogin() ([]byte, *customError) {
 	}
 	body := bytes.NewReader(requestBodyBytes)
 	//response, err := http.Post("https://w9lnd111rl.execute-api.us-east-1.amazonaws.com/default/api/v1/auth/login", "application/json", body)
-	requestHTTP, err := http.NewRequest("POST", "https://w9lnd111rl.execute-api.us-east-1.amazonaws.com/default/api/v1/auth/login", body)
+	requestHTTP, err := http.NewRequest("POST", LOGIN_ENDPOINT, body)
 	if err != nil {
 		return []byte{}, &customError{GENERIC_ERROR, "Could not make login request"}
 	}
@@ -148,7 +148,7 @@ func (ca *CloudfixAuth) storeCreds(loginParsed *LoginData) *customError {
 }
 
 func (ca *CloudfixAuth) validate(token string) (int, *customError) {
-	req, err := http.NewRequest("GET", "https://w9lnd111rl.execute-api.us-east-1.amazonaws.com/default/api/v1/financial/accounts", nil)
+	req, err := http.NewRequest("GET", ACCOUNTS_ENDPOINT, nil)
 	if err != nil {
 		return 0, &customError{GENERIC_ERROR, "Internal Error"}
 	}

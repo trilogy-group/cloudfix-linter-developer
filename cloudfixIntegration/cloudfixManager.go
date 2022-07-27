@@ -65,7 +65,7 @@ func (e *customError) Error() string {
 
 func (c *CloudfixManager) getReccosFromCloudfix(token string) ([]byte, *customError) {
 	var reccos []byte
-	req, err := http.NewRequest("GET", "https://w9lnd111rl.execute-api.us-east-1.amazonaws.com/default/api/v1/ui/recommendations", nil)
+	req, err := http.NewRequest("GET", RECOMMENDATIONS_ENDPOINT, nil)
 	if err != nil {
 		return reccos, &customError{GENERIC_ERROR, "Internal Error"}
 	}

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/trilogy-group/cloudfix-linter/cloudfixIntegration"
 )
 
 type Orchestrator struct {
@@ -43,7 +45,7 @@ func (o *Orchestrator) extractModulePaths(jsonString []byte) ([]string, error) {
 
 func (o *Orchestrator) runReccos() {
 	var persist Persistance
-	var cloudfixMan CloudfixManager
+	var cloudfixMan cloudfixIntegration.CloudfixManager
 	var terraMan TerraformManager
 	reccosFileName := "recos.txt"
 	reccosMapping, errC := cloudfixMan.getReccos()
