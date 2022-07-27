@@ -1,4 +1,4 @@
-package main
+package cloudfixIntegration
 
 import (
 	"fmt"
