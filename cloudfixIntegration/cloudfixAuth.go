@@ -109,7 +109,7 @@ func (ca *CloudfixAuth) handleLogin() ([]byte, *customError) {
 	if err != nil {
 		return []byte{}, &customError{GENERIC_ERROR, "Error logging user in"}
 	}
-	//defer response.Body.Close()
+	defer response.Body.Close()
 	if response.StatusCode == http.StatusBadRequest { //Wrong Username and Passwords revert back a 400 response
 		return []byte{}, &customError{3, "Unauthorized login credentials. Please check username and password and try again."}
 	} else if response.StatusCode != http.StatusOK {
