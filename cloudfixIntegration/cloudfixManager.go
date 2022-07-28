@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -153,19 +155,26 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 	if errA != nil && errA.StatusCode != STORAGE_ERROR {
 		return mapping, errA
 	}
-	// currPWD, _ := exec.Command("pwd").Output()
-	// currPWDStr := string(currPWD[:])
-	// currPWDStrip := strings.Trim(currPWDStr, "\n")
-	// currPWDStrip += "/reccos.json"
-	// reccos, errR := ioutil.ReadFile(currPWDStrip)
-	// if errR != nil {
-	// 	//Add Error Log
-	// 	panic(errR)
-	// }
-	reccos, errT := c.getReccosFromCloudfix(token)
-	if errT != nil {
-		fmt.Println(errT.Message)
-		return mapping, errT
+	var reccos []byte
+	_, present := os.LookupEnv("CLOUDFIX_FILE")
+	if present {
+		var errR error
+		currPWD, _ := exec.Command("pwd").Output()
+		currPWDStr := string(currPWD[:])
+		currPWDStrip := strings.Trim(currPWDStr, "\n")
+		currPWDStrip += "/reccos.json"
+		reccos, errR = ioutil.ReadFile(currPWDStrip)
+		if errR != nil {
+			//Add Error Log
+			return mapping, &customError{GENERIC_ERROR, "Could not read reccos from file"}
+		}
+	} else {
+		var errT *customError
+		reccos, errT = c.getReccosFromCloudfix(token)
+		if errT != nil {
+			fmt.Println(errT.Message)
+			return mapping, errT
+		}
 	}
 	attrMapping := []byte(`{
 		"Gp2Gp3": {
