@@ -1,6 +1,9 @@
 package main
 
 import (
+	"errors"
+	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/spf13/cobra"
@@ -13,13 +16,23 @@ var (
 		Short: "This tool helps flag reccomendations from Cloudfix in your terraform code",
 		Long:  "This tool helps flag reccomendations from Cloudfix in your terraform code",
 	}
+	jsonFlag  bool
 	recccoCmd = &cobra.Command{
-		Use:   "flagRecco",
+		Use:   "recco",
 		Short: "To flag reccomendations",
 		Long:  "Running this command will parse through your terraform code and flag reccomendations from Cloudfix for resources that it finds",
 		Run: func(cmd *cobra.Command, args []string) {
+			homeDir, err := os.Getwd()
+			if err != nil {
+				fmt.Println("Failed.")
+			}
+			hclFilePath := homeDir + "/.tflint.hcl"
+			if _, err := os.Stat(hclFilePath); errors.Is(err, os.ErrNotExist) {
+				fmt.Println(`The current directory needs to be initialised. Run "cloudfix-linter init" to initialise`)
+				return
+			}
 			var orches Orchestrator
-			orches.runReccos()
+			orches.runReccos(jsonFlag)
 		},
 	}
 	currptFlag = &cobra.Command{
@@ -34,15 +47,29 @@ var (
 			return nil
 		},
 	}
+	initCmd = &cobra.Command{
+		Use:   "init",
+		Short: "To initialise the directory. Run this before asking for recommendations",
+		Long:  "Running this command will initialise the directory and add tags to your terraform resources",
+		Run: func(cmd *cobra.Command, args []string) {
+			err := initDir()
+			if err != nil {
+				fmt.Println("Failed to initialise")
+
+			}
+		},
+	}
 )
 
 func init() {
 	rootCmd.AddCommand(recccoCmd)
 	rootCmd.AddCommand(currptFlag)
+	rootCmd.AddCommand(initCmd)
+	recccoCmd.Flags().BoolVarP(&jsonFlag, "json", "j", false, "to get output in json format")
 }
 
 func main() {
 	if err := rootCmd.Execute(); err != nil {
-		panic(err)
+		fmt.Println("Error occurred while execution")
 	}
 }
