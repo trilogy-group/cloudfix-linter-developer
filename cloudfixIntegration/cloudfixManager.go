@@ -151,10 +151,6 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 
 	var cloudAuth CloudfixAuth
 	mapping := make(map[string]map[string]string)
-	token, errA := cloudAuth.getToken()
-	if errA != nil && errA.StatusCode != STORAGE_ERROR {
-		return mapping, errA
-	}
 	var reccos []byte
 	_, present := os.LookupEnv("CLOUDFIX_FILE")
 	if present {
@@ -169,6 +165,10 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 			return mapping, &customError{GENERIC_ERROR, "Could not read reccos from file"}
 		}
 	} else {
+		token, errA := cloudAuth.getToken()
+		if errA != nil && errA.StatusCode != STORAGE_ERROR {
+			return mapping, errA
+		}
 		var errT *customError
 		reccos, errT = c.getReccosFromCloudfix(token)
 		if errT != nil {
