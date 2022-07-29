@@ -1,0 +1,28 @@
+# List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
+tasks:
+  - init: |
+     sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl 
+     curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+     sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main" 
+     sudo apt update
+     sudo apt install terraform
+     terraform 
+    
+  - init: |
+        export AWS_ACCESS_KEY_ID=NOTCONFIGURED
+        export AWS_SECRET_ACCESS_KEY=NOTCONFIGURED
+        export AWS_SESSION_TOKEN=NOTCONFIGURED
+        export AWS_DEFAULT_REGION=us-east-1
+
+  - init: |
+        brew tap bridgecrewio/tap
+        brew install bridgecrewio/tap/yor
+
+  - init: curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+# List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
+ports:
+  - port: 3000
+    onOpen: open-preview
+
+
