@@ -1,9 +1,17 @@
 # cloudfix-linter
 
-A linting tool for HashiCorp's Terraform to flag recommendations from Cloudfix
+## Who is the product for
 
-Link to the User guide to use Cloudfix linter: https://docs.google.com/document/d/1cLR7cGQ8RrIgAb7R9qwgabU_VjAXO3Ria_9RGZ0USWY
+The product is for anyone who uses terraform to manage their AWS infrastructure and would like to know how best they can optimise their cloud infrastucture in order to save costs.
 
+## What is the product
+
+It is a command line tool that flags optimisation oppurtunities detected by Cloudfix for the resources that have been deployed using terraform. It'll either flag the specific attribute within the resource that needs to be changed (along with what it needs to be changed to), or in the case that such an attribute does not exist, describe the oppurtunity against the name of the resource about which the oppurtunity is present. 
+
+## Pre-requisites to use the product
+
+1. An active cloudfix account at https://preview.app.cloudfix.com/
+2. Resources deployed on AWS using terraform for which you would like to see reccomendations.
 
 ## Usage guide
 1) Run command 
@@ -68,3 +76,17 @@ Sample mapping json:
 For each new oppurtunity type, create a new block in the json by its name. If the opportunity type targets an attribute in specific, put in the name of the attribute for the Attribute Type. If it does not target any attribute, put in "NoAttributeMarker" instead. For the Attribute Value, if that needs to picked up from the parameters field of the cloudfix recommendation, set that as parameters.{Name of field within parameters block} (for reference take a look at the block for Ec2IntelToAmd). In case the value for the attribute is static and need not be picked up from the parameters field, it can be hardcoded directly in the json (for reference take a look at the block for Gp2Gp3). If the oppurtunity type does not target any attribute in specific, for the attribute value, put in the message that you want displayed to the user (for reference see the block for EfsInfrequentAccess)
 
 This mapping is currently part of the code itself, but can be easily hosted online. 
+
+
+## Contributing
+
+The project uses a custom ruleset written for [TfLint](https://github.com/terraform-linters/tflint/blob/master/docs/developer-guide/architecture.md) to flag reccomendations from cloudfix. The github repo for the ruleset can be accessed [here] (https://github.com/trilogy-group/tflint-ruleset-template)
+
+### Local debugging
+```bash
+TODO The commands
+```
+
+### Building and publising
+ 
+ See the Github action file for details.
