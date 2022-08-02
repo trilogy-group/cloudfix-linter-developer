@@ -30,8 +30,9 @@ terraform
 sudo apt install unzip
 
 #Installing yor_trace 
-brew tap bridgecrewio/tap
-brew install bridgecrewio/tap/yor
+YOR_VERSION=0.1.150
+wget -q -O - https://github.com/bridgecrewio/yor/releases/download/${YOR_VERSION}/yor_${YOR_VERSION}_${PLATFORM}.tar.gz | tar -xvz -C /tmp               
+sudo mv /tmp/yor /usr/local/bin/yor
 
 #Installing tflint 
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
