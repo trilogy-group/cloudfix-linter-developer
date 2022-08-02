@@ -16,9 +16,7 @@ It is a command line tool that flags optimisation oppurtunities detected by Clou
 ## Usage guide
 1) Run command 
 ```bash
-wget https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.sh \
- && chmod +x install.sh \
- && ./install.sh
+wget -O - https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.sh | bash
  ```
 
 2). Ensure that terraform can access your AWS account. You can user one of the following
