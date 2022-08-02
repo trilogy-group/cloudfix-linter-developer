@@ -1,24 +1,42 @@
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
-  - init: |
-     sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl 
-     curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-     sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main" 
-     sudo apt update
-     sudo apt install terraform
-     terraform 
-    
-  - init: |
-        export AWS_ACCESS_KEY_ID=NOTCONFIGURED
-        export AWS_SECRET_ACCESS_KEY=NOTCONFIGURED
-        export AWS_SESSION_TOKEN=NOTCONFIGURED
-        export AWS_DEFAULT_REGION=us-east-1
+  - command: |
+      Arch=$(uname -m)
 
-  - init: |
-        brew tap bridgecrewio/tap
-        brew install bridgecrewio/tap/yor
+      if [[ "$Arch" == "x86_64" || "$Arch" == "amd64" ]]; then
+          PLATFORM=linux_amd64
+      elif [[ "$Arch" == "aarch64" || "$Arch" == "arm64" ]]; then
+          PLATFORM=linux_arm64
+      elif [[ "$Arch" == "i686" || "$Arch" == "i386" ]]; then
+          PLATFORM=linux_386
+      elif [ "$Arch" = "armhf" ]; then
+          PLATFORM=linux_arm
+      else 
+          echo "Unsupported platform"
+          exit 1
+      fi
 
-  - init: curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+      #Installing terraform 
+      TERRAFORM_VERSION=1.2.6
+      (wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${PLATFORM}.zip \
+        && unzip terraform_${TERRAFORM_VERSION}_${PLATFORM}.zip \
+        && sudo mv terraform /usr/bin \
+        && rm terraform_${TERRAFORM_VERSION}_${PLATFORM}.zip) || exit 1
+
+      #Checking if terraform is installed
+      terraform 
+
+      #downloading unzip to unzip tflint 
+      sudo apt install unzip
+
+      #Installing yor_trace 
+      YOR_VERSION=0.1.150
+      wget -q -O - https://github.com/bridgecrewio/yor/releases/download/${YOR_VERSION}/yor_${YOR_VERSION}_${PLATFORM}.tar.gz | tar -xvz -C /tmp               
+      sudo mv /tmp/yor /usr/local/bin/yor
+
+      #Installing tflint 
+      curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 ports:
