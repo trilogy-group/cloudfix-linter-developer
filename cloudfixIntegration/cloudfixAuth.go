@@ -128,6 +128,10 @@ func (ca *CloudfixAuth) storeCreds(loginParsed *LoginData) *customError {
 		return &customError{GENERIC_ERROR, "Internal Error"}
 	}
 	homeDir += "/.cloudfix-creds"
+	errDir := os.MkdirAll(homeDir, os.ModePerm)
+	if errDir != nil {
+		return &customError{STORAGE_ERROR, "Internal Error"}
+	}
 	fileA, errC := os.Create(homeDir + "/access-token")
 	if errC != nil {
 		return &customError{STORAGE_ERROR, "Internal Error"}
