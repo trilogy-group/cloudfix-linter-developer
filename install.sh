@@ -1,11 +1,7 @@
-#! /bin/sh
+#! /bin/bash
 
 #Installing terraform 
-sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl 
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main" 
-sudo apt update
-sudo apt install terraform
+echo "Not installing terraform as it is normally present in Devspaces"
 
 #downloading unzip to unzip tflint 
 sudo apt install unzip
