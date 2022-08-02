@@ -12,9 +12,6 @@ permissions:
   # issues: write
 
 jobs:
-  build:
-    name: Publish binaries
-    runs-on: ubuntu-latest
   goreleaser:
     runs-on: ubuntu-latest
     steps:
