@@ -23,6 +23,11 @@ jobs:
       -
         name: Fetch all tags
         run: git fetch --force --tags
+      - name: Release install.sh
+        uses: softprops/action-gh-release@v1        
+        with:
+          files: |
+            install.sh
       -
         name: Set up Go
         uses: actions/setup-go@v2
