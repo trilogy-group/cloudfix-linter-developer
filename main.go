@@ -3,10 +3,12 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 
 	"github.com/spf13/cobra"
+	"github.com/trilogy-group/cloudfix-linter/logger"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -69,7 +71,15 @@ func init() {
 }
 
 func main() {
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	logger.InitLogger(dirname)
+	logger.Info("Cloudfix-linter starting")
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println("Error occurred while execution")
+		logger.DevLogger().Fatal(err)
 	}
+
 }
