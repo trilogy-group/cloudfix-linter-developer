@@ -24,6 +24,12 @@ var (
 		Short: "To flag reccomendations",
 		Long:  "Running this command will parse through your terraform code and flag reccomendations from Cloudfix for resources that it finds",
 		Run: func(cmd *cobra.Command, args []string) {
+			dirname, err := os.UserHomeDir()
+			if err != nil {
+				log.Fatal(err)
+			}
+			logger.InitLogger(dirname, jsonFlag)
+			logger.Info("Cloudfix-linter starting")
 			homeDir, err := os.Getwd()
 			if err != nil {
 				fmt.Println("Failed.")
@@ -71,15 +77,8 @@ func init() {
 }
 
 func main() {
-	dirname, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(err)
-	}
-	logger.InitLogger(dirname)
-	logger.Info("Cloudfix-linter starting")
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println("Error occurred while execution")
-		logger.DevLogger().Fatal(err)
 	}
 
 }

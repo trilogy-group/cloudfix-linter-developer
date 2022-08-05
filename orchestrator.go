@@ -7,6 +7,7 @@ import (
 	"os/exec"
 
 	"github.com/trilogy-group/cloudfix-linter/cloudfixIntegration"
+	"github.com/trilogy-group/cloudfix-linter/logger"
 )
 
 // Structures for Marshalling JSON outputs
@@ -60,7 +61,7 @@ type Orchestrator struct {
 // Memeber functions for the Orchestrator class follow:
 
 func (o *Orchestrator) extractModulePaths(jsonString []byte) ([]string, error) {
-	//appLogger := logger.New()
+	dlog := logger.DevLogger()
 	var modulePaths []string
 	//byteValue := []byte(jsonString)
 	/*
@@ -74,20 +75,21 @@ func (o *Orchestrator) extractModulePaths(jsonString []byte) ([]string, error) {
 	}
 	err := json.Unmarshal(jsonString, &result)
 	if err != nil {
-		//appLogger.Error().Println("Failed to unmarshall module paths from json string")
+		dlog.Error("Failed to unmarshall module paths from json string", err)
 		return modulePaths, err
 	}
-	//appLogger.Info().Println("Unmarshalled module paths succesfully!")
+	dlog.Debug("Unmarshalled module paths succesfully!")
 	noOfModules := len(result["issues"])
 	modulePaths = make([]string, noOfModules)
 	for key, element := range result["issues"] {
 		modulePaths[key] = fmt.Sprint(element["message"])
 	}
-	//appLogger.Info().Println("Extracted module paths succesfully!")
+	dlog.Error("Extracted module paths succesfully!")
 	return modulePaths, nil
 }
 
 func (o *Orchestrator) runReccos(jsonFlag bool) {
+	dlog := logger.DevLogger()
 	var persist Persistance
 	var cloudfixMan cloudfixIntegration.CloudfixManager
 	var terraMan TerraformManager
@@ -122,6 +124,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 	modulePaths, errM := o.extractModulePaths(modulesJson)
 	if errM != nil {
 		//log failure in extracting module paths
+		dlog.Error("Failed to extract module paths", errM)
 		return
 	}
 	if !jsonFlag {
@@ -157,7 +160,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 			}
 		}
 		if len(flaggedIssues) == 0 {
-			fmt.Println(`{}`)
+			fmt.Println(`[{}]`)
 			return
 		}
 		out, err := json.Marshal(flaggedIssues)

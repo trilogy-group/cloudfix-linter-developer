@@ -4,7 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
-
+	"io/ioutil"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
@@ -13,10 +13,10 @@ import (
 var logUser = logrus.New()
 var logDev = logrus.New()
 
-func InitLogger(logpath string) error {
+func InitLogger(logpath string, jsonFlag bool) error {
 	errDir := os.MkdirAll(filepath.Join(logpath, ".cloudfix-linter"), os.ModePerm)
 	if errDir != nil {
-		return errors.New("Can't create cloudfix-linter dir")
+		return errors.New("can't create cloudfix-linter dir")
 	}
 	logOutputFile, err := os.OpenFile(filepath.Join(logpath, ".cloudfix-linter", "debug-"+uuid.New().String()+".json"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
@@ -25,8 +25,13 @@ func InitLogger(logpath string) error {
 	logDev.SetOutput(logOutputFile)
 	logDev.SetReportCaller(true)
 	logDev.SetFormatter(&logrus.JSONFormatter{})
-
-	logUser.SetOutput(os.Stdout)
+	
+	if jsonFlag {
+		// Turn off the user logger completely in json mode because the only output should be json.
+		logUser.SetOutput(ioutil.Discard)
+	} else {
+		logUser.SetOutput(os.Stdout)
+	}
 	logUser.SetFormatter(&logrus.TextFormatter{})
 	return nil
 }
