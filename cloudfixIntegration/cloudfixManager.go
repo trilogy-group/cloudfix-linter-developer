@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/trilogy-group/cloudfix-linter/logger"
 )
 
 //Structure for unmarshalling the oppurtunityType to Attributes mapping (the mapping is present in "mappingAttributes.json")
@@ -147,13 +149,14 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 	//the structure of the map is resourceID -> Attribute type that needs to be targetted -> Ideal Attribute Value
 	// If there is no attribute that has to be targetted, attribute type would be filled with "NoAttributeMarker" and
 	//Attribute Value would be filled with any message that in the end has to be displayed to the user
-
+	dlog := logger.DevLogger()
 	var cloudAuth CloudfixAuth
 	mapping := make(map[string]map[string]string)
 	var reccos []byte
 	_, present := os.LookupEnv("CLOUDFIX_FILE")
 	if present {
 		var errR error
+		dlog.Info("CLOUDFIX_FILE mode on. Reading from reccos.json")
 		currPWD, _ := exec.Command("pwd").Output()
 		currPWDStr := string(currPWD[:])
 		currPWDStrip := strings.Trim(currPWDStr, "\n")
@@ -164,8 +167,10 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 			return mapping, &customError{GENERIC_ERROR, "Could not read reccos from file"}
 		}
 	} else {
+		dlog.Info("CLOUDFIX_FILE mode off. Calling CLoudFix")
 		token, errA := cloudAuth.getToken()
 		if errA != nil && errA.StatusCode != STORAGE_ERROR {
+			dlog.Error("Failed to retrieve and store the CloudFix token. ", errA)
 			return mapping, errA
 		}
 		var errT *customError
@@ -176,23 +181,23 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 		}
 	}
 	attrMapping := []byte(`{
-		"Gp2Gp3": {
-			"Attribute Type": "type",
-			"Attribute Value": "gp3"
-		},
-		"Ec2IntelToAmd": {
-			"Attribute Type": "instance_type",
-			"Attribute Value": "parameters.Migrating to instance type"
-		},
-		"StandardToSIT": {
-			"Attribute Type": "NoAttributeMarker",
-			"Attribute Value": "Enable Intelligent Tiering for this S3 Block by writing a aws_s3_bucket_intelligent_tiering_configuration resource block"
-		},
-		"EfsInfrequentAccess": {
-			"Attribute Type": "NoAttributeMarker",
-			"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
-		}
-	}`)
+						"Gp2Gp3": {
+							"Attribute Type": "type",
+							"Attribute Value": "gp3"
+						},
+						"Ec2IntelToAmd": {
+							"Attribute Type": "instance_type",
+							"Attribute Value": "parameters.Migrating to instance type"
+						},
+						"StandardToSIT": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Enable Intelligent Tiering for this S3 Block by writing a aws_s3_bucket_intelligent_tiering_configuration resource block"
+						},
+						"EfsInfrequentAccess": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
+						}
+						}`)
 	mapping = c.createMap(reccos, attrMapping)
 	return mapping, nil
 }
