@@ -2,9 +2,10 @@ package logger
 
 import (
 	"errors"
+	"io/ioutil"
 	"os"
 	"path/filepath"
-	"io/ioutil"
+
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
@@ -25,7 +26,7 @@ func InitLogger(logpath string, jsonFlag bool) error {
 	logDev.SetOutput(logOutputFile)
 	logDev.SetReportCaller(true)
 	logDev.SetFormatter(&logrus.JSONFormatter{})
-	
+
 	if jsonFlag {
 		// Turn off the user logger completely in json mode because the only output should be json.
 		logUser.SetOutput(ioutil.Discard)
@@ -38,6 +39,7 @@ func InitLogger(logpath string, jsonFlag bool) error {
 
 func Info(args ...interface{}) {
 	logUser.Info(args)
+	logDev.Info(args)
 }
 
 func DevLogger() *logrus.Logger {

@@ -96,12 +96,13 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 	reccosFileName := "recos.txt"
 	reccosMapping, errC := cloudfixMan.GetReccos()
 	if errC != nil {
-		fmt.Println(errC.Message)
+		logger.Info("Something went wrong. More logs in the log directory")
+		dlog.Error("Failed to get Reccomendations from CloudFix: ", errC)
 		return
 	}
 	if len(reccosMapping) == 0 {
 		//log that no reccomendations could be received
-		fmt.Println("No oppurtunities exist for your system")
+		logger.Info("No oppurtunities found")
 		//exit gracefully
 		return
 	}
@@ -160,12 +161,13 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 			}
 		}
 		if len(flaggedIssues) == 0 {
-			fmt.Println(`[{}]`)
+			fmt.Println(`[]`)
 			return
 		}
 		out, err := json.Marshal(flaggedIssues)
 		if err != nil {
-			fmt.Println("Error getting JSON output")
+			logger.Info("Failed to parse and display opportunities. More info in the log directory")
+			dlog.Error("Failed to parse flagged issues: ", err)
 			return
 		}
 		fmt.Println(string(out[:]))

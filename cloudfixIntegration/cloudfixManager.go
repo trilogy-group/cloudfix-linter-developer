@@ -2,7 +2,6 @@ package cloudfixIntegration
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -172,7 +171,7 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 		var errT *customError
 		reccos, errT = c.getReccosFromCloudfix(token)
 		if errT != nil {
-			fmt.Println(errT.Message)
+			//fmt.Println(errT.Message)
 			return mapping, errT
 		}
 	}
