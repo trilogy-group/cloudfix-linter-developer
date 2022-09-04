@@ -103,6 +103,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 	if len(reccosMapping) == 0 {
 		//log that no reccomendations could be received
 		logger.Info("No oppurtunities found")
+		fmt.Println(`[]`)
 		//exit gracefully
 		return
 	}
