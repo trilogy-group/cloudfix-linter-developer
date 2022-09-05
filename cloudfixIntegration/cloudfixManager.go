@@ -68,6 +68,7 @@ func (e *customError) Error() string {
 //Member functions follow:
 
 func (c *CloudfixManager) getReccosFromCloudfix(token string) ([]byte, *customError) {
+	dlog := logger.DevLogger()
 	var reccos []byte
 	req, err := http.NewRequest("GET", RECOMMENDATIONS_ENDPOINT, nil)
 	if err != nil {
@@ -83,13 +84,17 @@ func (c *CloudfixManager) getReccosFromCloudfix(token string) ([]byte, *customEr
 	defer response.Body.Close()
 	statusCode := response.StatusCode
 	if statusCode != http.StatusOK {
+		dlog.WithField("statusCode", statusCode).Error("Failed to fetch reccomendations")
+		body, errI := ioutil.ReadAll(response.Body)
+		if errI == nil {
+			dlog.WithField("statusCode", statusCode).Error(body)
+		}
 		return reccos, &customError{GENERIC_ERROR, "Failed to fetch reccomendations"}
 	}
 	reccos, errI := ioutil.ReadAll(response.Body)
 	if errI != nil {
 		return []byte{}, &customError{GENERIC_ERROR, "Internal Error"}
 	}
-	//fmt.Println(string(reccos))
 	return reccos, nil
 }
 

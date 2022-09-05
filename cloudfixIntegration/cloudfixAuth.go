@@ -103,7 +103,6 @@ func (ca *CloudfixAuth) handleLogin() ([]byte, *customError) {
 		return []byte{}, &customError{GENERIC_ERROR, "Error logging user in"}
 	}
 	body := bytes.NewReader(requestBodyBytes)
-	//response, err := http.Post("https://w9lnd111rl.execute-api.us-east-1.amazonaws.com/default/api/v1/auth/login", "application/json", body)
 	requestHTTP, err := http.NewRequest("POST", LOGIN_ENDPOINT, body)
 	if err != nil {
 		dlog.Error(err)
@@ -111,7 +110,6 @@ func (ca *CloudfixAuth) handleLogin() ([]byte, *customError) {
 	}
 	requestHTTP.Header.Set("Accept", "application/json")
 	requestHTTP.Header.Set("Content-Type", "application/json")
-	//fmt.Println(formatRequest(requestHTTP))
 	response, err := http.DefaultClient.Do(requestHTTP)
 	if err != nil {
 		dlog.Error(err)
