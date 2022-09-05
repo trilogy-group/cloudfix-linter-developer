@@ -96,8 +96,9 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 	reccosFileName := "recos.txt"
 	reccosMapping, errC := cloudfixMan.GetReccos()
 	if errC != nil {
-		logger.Info("Something went wrong. More logs in the log directory")
+		logger.Info("Something went wrong. More logs in the log directory. ", errC)
 		dlog.Error("Failed to get Reccomendations from CloudFix: ", errC)
+		fmt.Printf(`{"error": "%s"}`, errC)
 		return
 	}
 	if len(reccosMapping) == 0 {
