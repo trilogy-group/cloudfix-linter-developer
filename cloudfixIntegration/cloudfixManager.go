@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"github.com/trilogy-group/cloudfix-linter/logger"
@@ -153,8 +154,12 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 	var cloudAuth CloudfixAuth
 	mapping := make(map[string]map[string]string)
 	var reccos []byte
-	_, present := os.LookupEnv("CLOUDFIX_FILE")
+	val, present := os.LookupEnv("CLOUDFIX_FILE")
+	var modeBoolval bool
 	if present {
+		modeBoolval, _ = strconv.ParseBool(val)
+	}
+	if present && modeBoolval {
 		var errR error
 		dlog.Info("CLOUDFIX_FILE mode on. Reading from reccos.json")
 		currPWD, _ := exec.Command("pwd").Output()
