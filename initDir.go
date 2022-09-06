@@ -13,7 +13,7 @@ func initDir() error {
 	}
 	_, errW := file.WriteString(`plugin "template"{
 		enabled = true
-		version = "0.2.2"
+		version = "0.2.3"
 		source  = "github.com/trilogy-group/tflint-ruleset-template"
 }`)
 	if errW != nil {
