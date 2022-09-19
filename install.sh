@@ -35,6 +35,8 @@ wget -q -O - https://github.com/bridgecrewio/yor/releases/download/${YOR_VERSION
 sudo mv /tmp/yor /usr/local/bin/yor
 
 #Installing tflint 
+# higher version have breaking changes to the plugin system and hence we can't install them without changing the plugin
+export TFLINT_VERSION=v0.39.3
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
 # Install cloudfix-linter
