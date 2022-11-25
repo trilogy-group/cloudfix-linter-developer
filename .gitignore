@@ -7,3 +7,4 @@ mappingFile.json
 tagsID.txt
 .vscode
 .tflint.hcl
+script.sh
