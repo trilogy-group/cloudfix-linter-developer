@@ -21,3 +21,4 @@ checksum:
 includes:
   - from_file:
       path: ./install.sh
+      path: ./install.ps1
