@@ -41,7 +41,7 @@ curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/instal
 
 # Install cloudfix-linter
 echo "Installing cloudfix-linter"
-(wget https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/cloudfix-linter_${PLATFORM} \
+(wget https://github.com/prasheel-ti/cloudfix-linter-developer/releases/latest/download/cloudfix-linter_${PLATFORM} \
   && mv cloudfix-linter_${PLATFORM} cloudfix-linter ) || exit 1
 sudo mv cloudfix-linter  /usr/local/bin/
 sudo chown root:root /usr/local/bin/cloudfix-linter
