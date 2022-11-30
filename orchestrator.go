@@ -132,6 +132,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 	}
 	if !jsonFlag {
 		output, _ := exec.Command("tflint", "--module", "--disable-rule=module_source").Output()
+		fmt.Println("output ", output)
 		fmt.Print(string(output))
 		for _, module := range modulePaths {
 			outputM, _ := exec.Command("tflint", module, "--module", "--disable-rule=module_source").Output()

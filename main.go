@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
-
+	"strconv"
 	"github.com/spf13/cobra"
 	"github.com/trilogy-group/cloudfix-linter/logger"
 )
@@ -60,10 +60,26 @@ var (
 		Short: "To initialise the directory. Run this before asking for recommendations",
 		Long:  "Running this command will initialise the directory and add tags to your terraform resources",
 		Run: func(cmd *cobra.Command, args []string) {
-			err := initDir()
+			l := len(args)
+			var default_recco bool = true
+			if l>1{
+				fmt.Println("Failed to initialise. Too many arguments")
+				return 
+			}
+			if l==1{
+				var e error
+				l, e = strconv.Atoi(args[0])
+				if e != nil {
+					fmt.Println("Failed to initialise")
+					return 
+				}
+				if l==1 {
+					default_recco = false
+				}
+			}
+			err := initDir(default_recco)
 			if err != nil {
 				fmt.Println("Failed to initialise")
-
 			}
 		},
 	}
