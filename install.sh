@@ -31,7 +31,7 @@ echo $1 | sudo -S apt install unzip
 
 #Installing yor_trace 
 YOR_VERSION=0.1.150
-wget -q -O - https://github.com/bridgecrewio/yor/releases/download/${YOR_VERSION}/yor_${YOR_VERSION}_${PLATFORM}.tar.gz | tar -xvz -C /tmp               
+wget -q -O - https://github.com/trilogy-group/bridgecrewio-yor/releases/download/${YOR_VERSION}/yor_${YOR_VERSION}_${PLATFORM}.tar.gz | tar -xvz -C /tmp               
 echo $1 | sudo -S mv /tmp/yor /usr/local/bin/yor
 
 #Installing tflint 
@@ -41,7 +41,7 @@ curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/instal
 
 # Install cloudfix-linter
 echo "Installing cloudfix-linter"
-(wget https://github.com/prasheel-ti/cloudfix-linter-developer/releases/latest/download/cloudfix-linter-developer_${PLATFORM} \
+(wget https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/cloudfix-linter-developer_${PLATFORM} \
   && mv cloudfix-linter-developer_${PLATFORM} cloudfix-linter ) || exit 1
 echo $1 | sudo -S mv cloudfix-linter  /usr/local/bin/
 echo $1 | sudo -S chown root:root /usr/local/bin/cloudfix-linter
