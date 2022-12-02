@@ -20,19 +20,19 @@ fi
 TERRAFORM_VERSION=1.2.6
 (wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${PLATFORM}.zip \
   && unzip terraform_${TERRAFORM_VERSION}_${PLATFORM}.zip \
-  && sudo mv terraform /usr/bin \
+  && echo $1 | sudo -S mv terraform /usr/bin \
   && rm terraform_${TERRAFORM_VERSION}_${PLATFORM}.zip) || exit 1
 
 #Checking if terraform is installed
 terraform 
 
 #downloading unzip to unzip tflint 
-sudo apt install unzip
+echo $1 | sudo -S apt install unzip
 
 #Installing yor_trace 
 YOR_VERSION=0.1.150
 wget -q -O - https://github.com/bridgecrewio/yor/releases/download/${YOR_VERSION}/yor_${YOR_VERSION}_${PLATFORM}.tar.gz | tar -xvz -C /tmp               
-sudo mv /tmp/yor /usr/local/bin/yor
+echo $1 | sudo -S mv /tmp/yor /usr/local/bin/yor
 
 #Installing tflint 
 # higher version have breaking changes to the plugin system and hence we can't install them without changing the plugin
@@ -41,8 +41,8 @@ curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/instal
 
 # Install cloudfix-linter
 echo "Installing cloudfix-linter"
-(wget https://github.com/prasheel-ti/cloudfix-linter-developer/releases/latest/download/cloudfix-linter_${PLATFORM} \
-  && mv cloudfix-linter_${PLATFORM} cloudfix-linter ) || exit 1
-sudo mv cloudfix-linter  /usr/local/bin/
-sudo chown root:root /usr/local/bin/cloudfix-linter
-sudo chmod 755 /usr/local/bin/cloudfix-linter
+(wget https://github.com/prasheel-ti/cloudfix-linter-developer/releases/latest/download/cloudfix-linter-developer_${PLATFORM} \
+  && mv cloudfix-linter-developer_${PLATFORM} cloudfix-linter ) || exit 1
+echo $1 | sudo -S mv cloudfix-linter  /usr/local/bin/
+echo $1 | sudo -S chown root:root /usr/local/bin/cloudfix-linter
+echo $1 | sudo -S chmod 755 /usr/local/bin/cloudfix-linter
