@@ -3,14 +3,27 @@ package main
 import (
 	"os/exec"
 	"strings"
-	"strconv"
+	"os"
+	"runtime"
+	"path/filepath"
 	tfjson "github.com/hashicorp/terraform-json"
 )
 
 type TerraformManager struct {
 	//No data types required
 }
-
+// Giving reference to terraform.exe file if present in windows
+func terraform() string{
+	if(runtime.GOOS=="windows"){
+		ex, err := os.Executable()
+		if err != nil {
+			panic(err)
+		}
+		basePath := filepath.Dir(ex)
+		return basePath+"\\terraform.exe"
+	}
+	return "terraform"
+}
 func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]string, error) {
 	tagToID := make(map[string]string)
 	tagCountMap := make(map[string]int)
@@ -81,7 +94,7 @@ func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagTo
 
 func (t *TerraformManager) getTagToIDMapping() (map[string]string, error) {
 	tagToID := make(map[string]string)
-	TfLintOutData, errT := exec.Command("terraform", "show", "-json").Output()
+	TfLintOutData, errT := exec.Command(terraform(), "show", "-json").Output()
 	if errT != nil {
 		//Add Log
 		return tagToID, errT
