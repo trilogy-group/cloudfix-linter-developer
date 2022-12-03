@@ -38,7 +38,7 @@ func (p *Persistance) store_tagMap(tagToIDMap map[string]string, fileNameForTagM
 		return err
 	}
 	for key, value := range tagToIDMap {
-		toWrite := fmt.Sprintf("%s:%s\n", key, value)
+		toWrite := fmt.Sprintf("%s->%s\n", key, value)
 		_, err := file.WriteString(toWrite)
 		if err != nil {
 			//Add Error Log
