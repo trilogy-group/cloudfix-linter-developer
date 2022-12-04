@@ -15,10 +15,10 @@ func initDir(default_recco bool) error {
 	config {
 		disabled_by_default = %t
 	}
-	plugin "template"{
+	plugin "developer"{
 		enabled = true
-		version = "0.3.0"
-		source  = "github.com/prasheel-ti/tflint-ruleset-template"
+		version = "0.3.5"
+		source  = "github.com/trilogy-group/tflint-ruleset-developer"
 	}
 	rule "flag_reccomend"{
 		enabled=true
