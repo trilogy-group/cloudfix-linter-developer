@@ -108,6 +108,7 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 	}
 	errU := json.Unmarshal(reccos, &responses) //the reccomendations from cloudfix are being unmarshalled
 	if errU != nil {
+		logger.Info(errU)
 		// add log
 		return mapping
 	}
@@ -117,6 +118,7 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 		//add log
 		return mapping
 	}
+
 	for _, recco := range responses { //iterating through the recommendations one by one
 		awsID := recco.ResourceId
 		oppurType := recco.OpportunityType
@@ -221,6 +223,7 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 							"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
 						}
 						}`)
+
 	mapping = c.createMap(reccos, attrMapping)
 	return mapping, nil
 }

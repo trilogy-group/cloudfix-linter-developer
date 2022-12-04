@@ -1,4 +1,4 @@
-module github.com/trilogy-group/cloudfix-linter
+module github.com/trilogy-group/cloudfix-linter-developer
 
 go 1.13
 

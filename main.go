@@ -5,23 +5,26 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"os/exec"
+	"path/filepath"
 	"runtime"
+
 	"github.com/spf13/cobra"
-	"github.com/trilogy-group/cloudfix-linter/logger"
+	"github.com/trilogy-group/cloudfix-linter-developer/logger"
 )
-func yor() string{
-	if(runtime.GOOS=="windows"){
+
+func yor() string {
+	if runtime.GOOS == "windows" {
 		ex, err := os.Executable()
 		if err != nil {
 			panic(err)
 		}
 		basePath := filepath.Dir(ex)
-		return basePath+"\\yor.exe"
+		return basePath + "\\yor.exe"
 	}
 	return "yor"
 }
+
 // rootCmd represents the base command when called without any subcommands
 var (
 	os_type = runtime.GOOS
@@ -78,7 +81,6 @@ var (
 			}
 		},
 	}
-	
 )
 
 func init() {
