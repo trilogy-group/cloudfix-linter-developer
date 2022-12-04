@@ -26,6 +26,7 @@ func terraform() string{
 }
 func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]string, error) {
 	tagToID := make(map[string]string)
+	tagCountMap := make(map[string]int)
 	var tfState tfjson.State
 	errU := tfState.UnmarshalJSON(TfLintOutData)
 	if errU != nil {
@@ -38,21 +39,21 @@ func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]string, 
 	//for root module resources
 	for _, rootResource := range tfState.Values.RootModule.Resources {
 		if rootResource != nil {
-			t.addPairToTagMap(rootResource, tagToID)
+			t.addPairToTagMap(rootResource, tagToID, tagCountMap)
 		}
 	}
 	// for all the resources present in child modules under the root module
 	for _, childModule := range tfState.Values.RootModule.ChildModules {
 		for _, childResource := range childModule.Resources {
 			if childResource != nil {
-				t.addPairToTagMap(childResource, tagToID)
+				t.addPairToTagMap(childResource, tagToID, tagCountMap)
 			}
 		}
 	}
 	return tagToID, nil
 }
 
-func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagToID map[string]string) {
+func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagToID map[string]string, tagCountMap map[string]int) {
 	AWSResourceIDRaw, ok := resource.AttributeValues["id"]
 	if !ok {
 		//log that id is not present
@@ -82,6 +83,11 @@ func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagTo
 	yorTagTrim := strings.Trim(yorTagStrip, `"`)
 	if yorTagTrim == "" || AWSResourceIDTrim == "" {
 		return
+	}
+	var tagCount int = tagCountMap[yorTagTrim]
+	tagCountMap[yorTagTrim] += 1
+	if tagCount!=0 {
+		yorTagTrim += "$"+strconv.Itoa(tagCount)
 	}
 	tagToID[yorTagTrim] = AWSResourceIDTrim
 }
