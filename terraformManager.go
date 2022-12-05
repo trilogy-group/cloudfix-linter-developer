@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime"
 	"path/filepath"
+	"strconv"
 	tfjson "github.com/hashicorp/terraform-json"
 )
 
