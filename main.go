@@ -72,7 +72,17 @@ var (
 		Short: "To initialise the directory. Run this before asking for recommendations",
 		Long:  "Running this command will initialise the directory and add tags to your terraform resources",
 		Run: func(cmd *cobra.Command, args []string) {
-			err := initDir()
+			tflintRecco, e := cmd.Flags().GetString("enableNonCloudfixRecco")
+			if e!=nil {
+				fmt.Println("Failed to initialise.")
+			}
+			var default_recco bool = true
+			if tflintRecco!="" {
+				if tflintRecco=="true"{
+					default_recco = false
+				}
+			}
+			err := initDir(default_recco)
 			if err != nil {
 				fmt.Println("Failed to initialise")
 			}
@@ -85,6 +95,7 @@ func init() {
 	rootCmd.AddCommand(recccoCmd)
 	rootCmd.AddCommand(currptFlag)
 	rootCmd.AddCommand(initCmd)
+	initCmd.PersistentFlags().String("enableNonCloudfixRecco","","Enables Extra recommendations coming from tflint")
 	recccoCmd.Flags().BoolVarP(&jsonFlag, "json", "j", false, "to get output in json format")
 }
 
