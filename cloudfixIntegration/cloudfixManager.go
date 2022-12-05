@@ -6,19 +6,20 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 
-	"github.com/trilogy-group/cloudfix-linter/logger"
+	"github.com/trilogy-group/cloudfix-linter-developer/logger"
 )
 
-//Structure for unmarshalling the oppurtunityType to Attributes mapping (the mapping is present in "mappingAttributes.json")
+// Structure for unmarshalling the oppurtunityType to Attributes mapping (the mapping is present in "mappingAttributes.json")
 type IdealAttributes struct {
 	AttributeType  string `json:"Attribute Type"`
 	AttributeValue string `json:"Attribute Value"`
 }
 
-//structure for unmarshalling the reccomendation json response from cloudfix
+// structure for unmarshalling the reccomendation json response from cloudfix
 type ResponseReccos struct {
 	Id                     string
 	Region                 string
@@ -167,14 +168,26 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 	if present && modeBoolval {
 		var errR error
 		dlog.Info("CLOUDFIX_FILE mode on. Reading from reccos.json")
-		currPWD, _ := exec.Command("pwd").Output()
-		currPWDStr := string(currPWD[:])
-		currPWDStrip := strings.Trim(currPWDStr, "\n")
-		currPWDStrip += "/reccos.json"
-		reccos, errR = ioutil.ReadFile(currPWDStrip)
+		currPWDStrip := ""
+		currPWDStr := ""
+		currPWDStrip1 := ""
+		if runtime.GOOS == "windows" {
+			currPWD, _ := exec.Command("powershell", "-NoProfile", "(pwd).path").Output()
+			currPWDStr = string(currPWD[:])
+			currPWDStrip = strings.Trim(currPWDStr, "\n")
+			currPWDStrip = strings.TrimRight(currPWDStrip, "\r")
+			currPWDStrip1 = currPWDStrip + "\\reccos.json"
+		} else {
+			currPWD, _ := exec.Command("pwd").Output()
+			currPWDStr = string(currPWD[:])
+			currPWDStrip = strings.Trim(currPWDStr, "\n")
+			currPWDStrip1 = currPWDStrip + "/reccos.json"
+		}
+
+		reccos, errR = ioutil.ReadFile(currPWDStrip1)
 		if errR != nil {
 			//Add Error Log
-			return mapping, &customError{GENERIC_ERROR, "Could not read reccos from file"}
+			return mapping, &customError{GENERIC_ERROR, "Could not read reccos from file: " + currPWDStrip1}
 		}
 	} else {
 		dlog.Info("CLOUDFIX_FILE mode off. Calling CLoudFix")

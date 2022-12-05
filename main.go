@@ -5,13 +5,26 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"os/exec"
+	"runtime"
 	"github.com/spf13/cobra"
 	"github.com/trilogy-group/cloudfix-linter/logger"
 )
-
+func yor() string{
+	if(runtime.GOOS=="windows"){
+		ex, err := os.Executable()
+		if err != nil {
+			panic(err)
+		}
+		basePath := filepath.Dir(ex)
+		return basePath+"\\yor.exe"
+	}
+	return "yor"
+}
 // rootCmd represents the base command when called without any subcommands
 var (
+	os_type = runtime.GOOS
 	rootCmd = &cobra.Command{
 		Use:   "cloudfix-linter",
 		Short: "This tool helps flag reccomendations from Cloudfix in your terraform code",
@@ -47,7 +60,7 @@ var (
 		Short: "Add tags to your terraform code to trace them back to the cloud",
 		Long:  "Add tags to your terraform code to trace them back to the cloud. You will need to run this command if the tool detects that there are no tags for a resource in your terraform code. You will be asked to run this command in that instance",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			_, err := exec.Command("yor", "tag", "-d", ".", "--tag-groups", "code2cloud").Output()
+			_, err := exec.Command(yor(), "tag", "-d", ".", "--tag-groups", "code2cloud").Output()
 			if err != nil {
 				return err
 			}
@@ -75,6 +88,7 @@ var (
 			}
 		},
 	}
+	
 )
 
 func init() {
@@ -89,5 +103,4 @@ func main() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println("Error occurred while execution")
 	}
-
 }

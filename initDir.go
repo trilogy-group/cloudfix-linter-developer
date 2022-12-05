@@ -27,11 +27,11 @@ func initDir(default_recco bool) error {
 	if errW != nil {
 		return errW
 	}
-	_, errT := exec.Command("tflint", "--init").Output()
+	_, errT := exec.Command(tflint(), "--init").Output()
 	if errT != nil {
 		return errT
 	}
-	_, errY := exec.Command("yor", "tag", "-d", ".", "--tag-groups", "code2cloud").Output()
+	_, errY := exec.Command(yor(), "tag", "-d", ".", "--tag-groups", "code2cloud").Output()
 	if errY != nil {
 		return err
 	}
