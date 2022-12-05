@@ -5,23 +5,26 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"os/exec"
+	"path/filepath"
 	"runtime"
+
 	"github.com/spf13/cobra"
-	"github.com/trilogy-group/cloudfix-linter/logger"
+	"github.com/trilogy-group/cloudfix-linter-developer/logger"
 )
-func yor() string{
-	if(runtime.GOOS=="windows"){
+
+func yor() string {
+	if runtime.GOOS == "windows" {
 		ex, err := os.Executable()
 		if err != nil {
 			panic(err)
 		}
 		basePath := filepath.Dir(ex)
-		return basePath+"\\yor.exe"
+		return basePath + "\\yor.exe"
 	}
 	return "yor"
 }
+
 // rootCmd represents the base command when called without any subcommands
 var (
 	os_type = runtime.GOOS
@@ -73,12 +76,12 @@ var (
 		Long:  "Running this command will initialise the directory and add tags to your terraform resources",
 		Run: func(cmd *cobra.Command, args []string) {
 			tflintRecco, e := cmd.Flags().GetString("enableNonCloudfixRecco")
-			if e!=nil {
+			if e != nil {
 				fmt.Println("Failed to initialise.")
 			}
 			var default_recco bool = true
-			if tflintRecco!="" {
-				if tflintRecco=="true"{
+			if tflintRecco != "" {
+				if tflintRecco == "true" {
 					default_recco = false
 				}
 			}
@@ -88,14 +91,13 @@ var (
 			}
 		},
 	}
-	
 )
 
 func init() {
 	rootCmd.AddCommand(recccoCmd)
 	rootCmd.AddCommand(currptFlag)
 	rootCmd.AddCommand(initCmd)
-	initCmd.PersistentFlags().String("enableNonCloudfixRecco","","Enables Extra recommendations coming from tflint")
+	initCmd.PersistentFlags().String("enableNonCloudfixRecco", "", "Enables Extra recommendations coming from tflint")
 	recccoCmd.Flags().BoolVarP(&jsonFlag, "json", "j", false, "to get output in json format")
 }
 

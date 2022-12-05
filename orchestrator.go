@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"runtime"
 	"os/exec"
 	"path/filepath"
-	"github.com/trilogy-group/cloudfix-linter/cloudfixIntegration"
-	"github.com/trilogy-group/cloudfix-linter/logger"
+	"runtime"
+
+	"github.com/trilogy-group/cloudfix-linter-developer/cloudfixIntegration"
+	"github.com/trilogy-group/cloudfix-linter-developer/logger"
 )
 
 // Structures for Marshalling JSON outputs
@@ -59,16 +60,15 @@ type Orchestrator struct {
 	// No Data Fields are required for this class
 }
 
-
 // Giving reference to tflint.exe file if present in windows
-func tflint() string{
-	if(runtime.GOOS=="windows"){
+func tflint() string {
+	if runtime.GOOS == "windows" {
 		ex, err := os.Executable()
 		if err != nil {
 			panic(err)
 		}
 		basePath := filepath.Dir(ex)
-		return basePath+"\\tflint.exe"
+		return basePath + "\\tflint.exe"
 	}
 	return "tflint"
 }
