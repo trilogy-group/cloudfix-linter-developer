@@ -17,13 +17,13 @@ func initDir(default_recco bool) error {
 	}
 	plugin "developer"{
 		enabled = true
-		version = "0.3.5"
+		version = "0.3.6"
 		source  = "github.com/trilogy-group/tflint-ruleset-developer"
 	}
 	rule "flag_reccomend"{
 		enabled=true
 	}
-	`,default_recco))
+	`, default_recco))
 	if errW != nil {
 		return errW
 	}
