@@ -1,12 +1,14 @@
 package main
 
 import (
-	"os/exec"
-	"strings"
+	"fmt"
 	"os"
-	"runtime"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
+	"strings"
+
 	tfjson "github.com/hashicorp/terraform-json"
 )
 
@@ -95,7 +97,19 @@ func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagTo
 
 func (t *TerraformManager) getTagToIDMapping() (map[string]string, error) {
 	tagToID := make(map[string]string)
-	TfLintOutData, errT := exec.Command(terraform(), "show", "-json").Output()
+	var TfLintOutData []byte
+	var errT error
+	var modeBoolval bool
+	val, present := os.LookupEnv("CLOUDFIX_FILE")
+	if present {
+		modeBoolval, _ = strconv.ParseBool(val)
+	}
+	if present && modeBoolval {
+		fmt.Printf("Reaching You %s\n", val)
+		TfLintOutData, errT = os.ReadFile("tf.show")
+	} else {
+		TfLintOutData, errT = exec.Command(terraform(), "show", "-json").Output()
+	}
 	if errT != nil {
 		//Add Log
 		return tagToID, errT
