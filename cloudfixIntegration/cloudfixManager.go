@@ -99,8 +99,8 @@ func (c *CloudfixManager) getReccosFromCloudfix(token string) ([]byte, *customEr
 	return reccos, nil
 }
 
-func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[string]map[string]string {
-	mapping := map[string]map[string]string{} //this is the map that has to be returned in the end
+func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[string]map[string][]string {
+	mapping := map[string]map[string][]string{} //this is the map that has to be returned in the end
 	var responses []ResponseReccos
 	if len(reccos) == 0 {
 		//log that no reccomendations have been received
@@ -120,7 +120,7 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 	for _, recco := range responses { //iterating through the recommendations one by one
 		awsID := recco.ResourceId
 		oppurType := recco.OpportunityType
-		attributeTypeToValue := map[string]string{}
+		attributeTypeToValue := map[string][]string{}
 		attributes, ok := attrMap[oppurType]
 		if ok {
 			//known oppurtunity type has been encountered
@@ -132,19 +132,19 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 					//log that attribute is not present
 					//if the code reaches here, then this means that the strategy for parsing has not been made correctly.
 					// So we are resorting to showing the reccomendation against the resource name with the description for the oppurtunity
-					attributeTypeToValue["NoAttributeMarker"] = recco.OpportunityDescription
+					attributeTypeToValue["NoAttributeMarker"] = append(attributeTypeToValue["NoAttributeMarker"], recco.OpportunityDescription)
 				} else {
 					idealAtrValue := valueFromReccos.(string) //extracting the ideal value as a string from cloudfix reccomendations
-					attributeTypeToValue[attributes.AttributeType] = idealAtrValue
+					attributeTypeToValue[attributes.AttributeType] = append(attributeTypeToValue[attributes.AttributeType], idealAtrValue)
 				}
 			} else {
 				//the ideal value is static and can be directly added
-				attributeTypeToValue[attributes.AttributeType] = attributes.AttributeValue
+				attributeTypeToValue[attributes.AttributeType] = append(attributeTypeToValue[attributes.AttributeType], attributes.AttributeValue)
 			}
 		} else {
 			//unknown oppurtunity type has been encountered
 			//So we are resorting to showing the reccomendation against the resource name with the description for the oppurtunity
-			attributeTypeToValue["NoAttributeMarker"] = recco.OpportunityDescription
+			attributeTypeToValue["NoAttributeMarker"] = append(attributeTypeToValue["NoAttributeMarker"], recco.OpportunityDescription)
 		}
 		_, exist := mapping[awsID]
 		if (exist==true) {
@@ -153,7 +153,9 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 			for key, value := range attributeTypeToValue {
 				_, exits := mapping[awsID][key]
 				if (exits) {
-					mapping[awsID][key] += "$" + value
+					for _, val := range value {
+						mapping[awsID][key] = append(mapping[awsID][key], val)
+					}
 				} else {
 					mapping[awsID][key] = value
 				}
@@ -165,14 +167,14 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 	return mapping
 }
 
-func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customError) {
+func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customError) {
 	//function to process the reccomendations from cloudfix and turn that into a map
 	//the structure of the map is resourceID -> Attribute type that needs to be targetted -> Ideal Attribute Value
 	// If there is no attribute that has to be targetted, attribute type would be filled with "NoAttributeMarker" and
 	//Attribute Value would be filled with any message that in the end has to be displayed to the user
 	dlog := logger.DevLogger()
 	var cloudAuth CloudfixAuth
-	mapping := make(map[string]map[string]string)
+	mapping := make(map[string]map[string][]string)
 	var reccos []byte
 	val, present := os.LookupEnv("CLOUDFIX_FILE")
 	var modeBoolval bool
