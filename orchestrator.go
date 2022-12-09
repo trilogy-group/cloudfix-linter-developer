@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 
 	"github.com/trilogy-group/cloudfix-linter/cloudfixIntegration"
 	"github.com/trilogy-group/cloudfix-linter/logger"
@@ -56,6 +58,19 @@ type JSONOutput struct {
 
 type Orchestrator struct {
 	// No Data Fields are required for this class
+}
+
+// Giving reference to tflint.exe file if present in windows
+func tflint() string {
+	if runtime.GOOS == "windows" {
+		ex, err := os.Executable()
+		if err != nil {
+			panic(err)
+		}
+		basePath := filepath.Dir(ex)
+		return basePath + "\\tflint.exe"
+	}
+	return "tflint"
 }
 
 // Memeber functions for the Orchestrator class follow:
@@ -123,7 +138,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 		panic(errT)
 	}
 	os.Setenv("TagsMapFile", tagFileName)
-	modulesJson, _ := exec.Command("tflint", "--only=module_source", "-f=json").Output()
+	modulesJson, _ := exec.Command(tflint(), "--only=module_source", "-f=json").Output()
 	modulePaths, errM := o.extractModulePaths(modulesJson)
 	if errM != nil {
 		//log failure in extracting module paths
@@ -131,15 +146,15 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 		return
 	}
 	if !jsonFlag {
-		output, _ := exec.Command("tflint", "--module", "--disable-rule=module_source").Output()
+		output, _ := exec.Command(tflint(), "--module", "--disable-rule=module_source").Output()
 		fmt.Print(string(output))
 		for _, module := range modulePaths {
-			outputM, _ := exec.Command("tflint", module, "--module", "--disable-rule=module_source").Output()
+			outputM, _ := exec.Command(tflint(), module, "--module", "--disable-rule=module_source").Output()
 			fmt.Print(string(outputM))
 		}
 	} else {
 		var flaggedIssues []JSONIssue
-		output, _ := exec.Command("tflint", "--module", "--disable-rule=module_source", "-f=json").Output()
+		output, _ := exec.Command(tflint(), "--module", "--disable-rule=module_source", "-f=json").Output()
 		var jsonOutRoot JSONOutput
 		errMR := json.Unmarshal(output, &jsonOutRoot)
 		if errMR != nil {
@@ -151,7 +166,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 			flaggedIssues = append(flaggedIssues, jsonOutRoot.Issues...)
 		}
 		for _, module := range modulePaths {
-			outputM, _ := exec.Command("tflint", module, "--module", "--disable-rule=module_source", "-f=json").Output()
+			outputM, _ := exec.Command(tflint(), module, "--module", "--disable-rule=module_source", "-f=json").Output()
 			var jsonOutModules JSONOutput
 			errMM := json.Unmarshal(outputM, &jsonOutModules)
 			if errMM != nil {

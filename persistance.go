@@ -11,15 +11,19 @@ type Persistance struct {
 
 //Member functions for the class follow:
 
-func (p *Persistance) store_reccos(reccosMap map[string]map[string]string, fileNameForReccos string) error {
+func (p *Persistance) store_reccos(reccosMap map[string]map[string][]string, fileNameForReccos string) error {
 	file, err := os.Create(fileNameForReccos)
 	if err != nil {
 		//Add error log
 		return err
 	}
 	for key, innerMap := range reccosMap {
-		for innerKey, innerValue := range innerMap {
-			toWrite := fmt.Sprintf("%s:%s:%s\n", key, innerKey, innerValue)
+		for innerKey, innerList := range innerMap {
+			toWrite := fmt.Sprintf("%s:%s", key, innerKey)
+			for _, innerValue := range innerList {
+				toWrite = toWrite + fmt.Sprintf(":%s", innerValue)
+			}
+			toWrite = toWrite + "\n"
 			_, err := file.WriteString(toWrite)
 			if err != nil {
 				//Add Error Log
@@ -38,7 +42,7 @@ func (p *Persistance) store_tagMap(tagToIDMap map[string]string, fileNameForTagM
 		return err
 	}
 	for key, value := range tagToIDMap {
-		toWrite := fmt.Sprintf("%s:%s\n", key, value)
+		toWrite := fmt.Sprintf("%s->%s\n", key, value)
 		_, err := file.WriteString(toWrite)
 		if err != nil {
 			//Add Error Log

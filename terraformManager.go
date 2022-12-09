@@ -1,7 +1,11 @@
 package main
 
 import (
+	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
+	"strconv"
 	"strings"
 
 	tfjson "github.com/hashicorp/terraform-json"
@@ -11,8 +15,21 @@ type TerraformManager struct {
 	//No data types required
 }
 
+// Giving reference to terraform.exe file if present in windows
+func terraform() string {
+	if runtime.GOOS == "windows" {
+		ex, err := os.Executable()
+		if err != nil {
+			panic(err)
+		}
+		basePath := filepath.Dir(ex)
+		return basePath + "\\terraform.exe"
+	}
+	return "terraform"
+}
 func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]string, error) {
 	tagToID := make(map[string]string)
+	tagCountMap := make(map[string]int)
 	var tfState tfjson.State
 	errU := tfState.UnmarshalJSON(TfLintOutData)
 	if errU != nil {
@@ -25,21 +42,21 @@ func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]string, 
 	//for root module resources
 	for _, rootResource := range tfState.Values.RootModule.Resources {
 		if rootResource != nil {
-			t.addPairToTagMap(rootResource, tagToID)
+			t.addPairToTagMap(rootResource, tagToID, tagCountMap)
 		}
 	}
 	// for all the resources present in child modules under the root module
 	for _, childModule := range tfState.Values.RootModule.ChildModules {
 		for _, childResource := range childModule.Resources {
 			if childResource != nil {
-				t.addPairToTagMap(childResource, tagToID)
+				t.addPairToTagMap(childResource, tagToID, tagCountMap)
 			}
 		}
 	}
 	return tagToID, nil
 }
 
-func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagToID map[string]string) {
+func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagToID map[string]string, tagCountMap map[string]int) {
 	AWSResourceIDRaw, ok := resource.AttributeValues["id"]
 	if !ok {
 		//log that id is not present
@@ -70,12 +87,28 @@ func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagTo
 	if yorTagTrim == "" || AWSResourceIDTrim == "" {
 		return
 	}
+	var tagCount int = tagCountMap[yorTagTrim]
+	tagCountMap[yorTagTrim] += 1
+	if tagCount != 0 {
+		yorTagTrim += "$" + strconv.Itoa(tagCount)
+	}
 	tagToID[yorTagTrim] = AWSResourceIDTrim
 }
 
 func (t *TerraformManager) getTagToIDMapping() (map[string]string, error) {
 	tagToID := make(map[string]string)
-	TfLintOutData, errT := exec.Command("terraform", "show", "-json").Output()
+	var TfLintOutData []byte
+	var errT error
+	var modeBoolval bool
+	val, present := os.LookupEnv("CLOUDFIX_TERRAFORM_LOCAL")
+	if present {
+		modeBoolval, _ = strconv.ParseBool(val)
+	}
+	if present && modeBoolval {
+		TfLintOutData, errT = os.ReadFile("tf.show")
+	} else {
+		TfLintOutData, errT = exec.Command(terraform(), "show", "-json").Output()
+	}
 	if errT != nil {
 		//Add Log
 		return tagToID, errT
