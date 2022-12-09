@@ -97,7 +97,18 @@ func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagTo
 
 func (t *TerraformManager) getTagToIDMapping() (map[string]string, error) {
 	tagToID := make(map[string]string)
-	TfLintOutData, errT := exec.Command(terraform(), "show", "-json").Output()
+	var TfLintOutData []byte
+	var errT error
+	var modeBoolval bool
+	val, present := os.LookupEnv("CLOUDFIX_TERRAFORM_LOCAL")
+	if present {
+		modeBoolval, _ = strconv.ParseBool(val)
+	}
+	if present && modeBoolval {
+		TfLintOutData, errT = os.ReadFile("tf.show")
+	} else {
+		TfLintOutData, errT = exec.Command(terraform(), "show", "-json").Output()
+	}
 	if errT != nil {
 		//Add Log
 		return tagToID, errT
