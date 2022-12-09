@@ -187,8 +187,7 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 
 		reccos, errR = ioutil.ReadFile(currPWDStrip1)
 		if errR != nil {
-			//Add Error Log
-			return mapping, &customError{GENERIC_ERROR, "Could not read reccos from file: " + currPWDStrip1}
+			return mapping, &customError{GENERIC_ERROR, "Could not read reccos from file "}
 		}
 	} else {
 		dlog.Info("CLOUDFIX_FILE mode off. Calling CLoudFix")
@@ -200,7 +199,6 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 		var errT *customError
 		reccos, errT = c.getReccosFromCloudfix(token)
 		if errT != nil {
-			//fmt.Println(errT.Message)
 			return mapping, errT
 		}
 	}
