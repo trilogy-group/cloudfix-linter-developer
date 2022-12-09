@@ -236,26 +236,6 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 						"EfsInfrequentAccess": {
 							"Attribute Type": "NoAttributeMarker",
 							"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
-						},
-						"IoToGp3": {
-							"Attribute Type": "type",
-							"Attribute Value": "gp3"
-						},
-						"DuplicateCloudTrail": {
-							"Attribute Type": "enabled",
-							"Attribute Value": "false"
-						},
-						"UnusedEBSVolumes": {
-							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Unattached EBS Volumes, Remove this to save the cost"
-						},
-						"VpcIdleEndpoint": {
-							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Idle VPC Endpoint, Remove this to save the cost"
-						},
-						"EfsIntelligentTiering": {
-							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
 						}
 						}`)
 	mapping = c.createMap(reccos, attrMapping)
