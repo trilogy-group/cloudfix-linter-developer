@@ -1,4 +1,4 @@
-# cloudfix-linter
+# Cloudfix-linter
 
 ## Who is the product for
 
@@ -6,7 +6,7 @@ The product is for anyone who uses terraform to manage their AWS infrastructure 
 
 ## What is the product
 
-It is a command line tool that flags optimisation oppurtunities detected by Cloudfix for the resources that have been deployed using terraform. It'll either flag the specific attribute within the resource that needs to be changed (along with what it needs to be changed to), or in the case that such an attribute does not exist, describe the oppurtunity against the name of the resource about which the oppurtunity is present. 
+It is a command line tool that flags optimisation oppurtunities detected by Cloudfix for the resources that have been deployed using terraform. It'll either flag the specific attribute within the resource that needs to be changed (along with what it needs to be changed to), or in the case that such an attribute does not exist, describe the oppurtunity against the name of the resource about which the oppurtunity is present. It will identify the resources deployed by remote modules and provide recommendations for them.
 
 ## Pre-requisites to use the product
 
@@ -19,15 +19,15 @@ It is a command line tool that flags optimisation oppurtunities detected by Clou
 ```
 Invoke-WebRequest -URI https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/install.ps1 -OutFile install.ps1; ./install.ps1 (pwd).path
 ```
-- Linux
+- Linux and Devspaces
 ```bash
 read -sp "Enter sudo password" pass  &&  wget -O - https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/install.sh | bash /dev/stdin $pass
  ```
 
 2). Ensure that terraform can access your AWS account. You can user one of the following
 a) Devconnect with [saml2aws](https://github.com/Versent/saml2aws)
-    b) Set the access key and the secret key inside of the provider "aws" block eg: in the main.tf file provider "aws" { region = "us-east-1" access_key = "my-access-key" secret_key = "my-secret-key" } 
-    c) Set and export AWS_ACCESS_KEY_ID , AWS_SECRET_ACCESS_KEY , AWS_SESSION_TOKEN as enviroment variables. More information on how to give access can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+b) Set the access key and the secret key inside of the provider "aws" block eg: in the main.tf file provider "aws" { region = "us-east-1" access_key = "my-access-key" secret_key = "my-secret-key" } 
+c) Set and export AWS_ACCESS_KEY_ID , AWS_SECRET_ACCESS_KEY , AWS_SESSION_TOKEN as enviroment variables. More information on how to give access can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 
 3) This version works with CloudFix v3 so make sure you have credentials to https://app.cloudfix.com/
 
