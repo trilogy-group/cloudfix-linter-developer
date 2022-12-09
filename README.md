@@ -14,7 +14,7 @@ It is a command line tool that flags optimisation oppurtunities detected by Clou
 2. Resources deployed on AWS using terraform for which you would like to see reccomendations.
 
 ## Usage guide
-1) Run command 
+#### 1. Run command 
 - Windows
 ```
 Invoke-WebRequest -URI https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/install.ps1 -OutFile install.ps1; ./install.ps1 (pwd).path
@@ -24,26 +24,27 @@ Invoke-WebRequest -URI https://github.com/trilogy-group/cloudfix-linter-develope
 read -sp "Enter sudo password" pass  &&  wget -O - https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/install.sh | bash /dev/stdin $pass
  ```
 
-2). Ensure that terraform can access your AWS account. You can user one of the following
-a) Devconnect with [saml2aws](https://github.com/Versent/saml2aws)
-b) Set the access key and the secret key inside of the provider "aws" block eg: in the main.tf file provider "aws" { region = "us-east-1" access_key = "my-access-key" secret_key = "my-secret-key" } 
-c) Set and export AWS_ACCESS_KEY_ID , AWS_SECRET_ACCESS_KEY , AWS_SESSION_TOKEN as enviroment variables. More information on how to give access can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+#### 2. Ensure that terraform can access your AWS account. You can user one of the following:
 
-3) This version works with CloudFix v3 so make sure you have credentials to https://app.cloudfix.com/
+- Devconnect with [saml2aws](https://github.com/Versent/saml2aws)
+- Set the access key and the secret key inside of the provider "aws" block eg: in the main.tf file provider "aws" { region = "us-east-1" access_key = "my-access-key" secret_key = "my-secret-key" } 
+- Set and export AWS_ACCESS_KEY_ID , AWS_SECRET_ACCESS_KEY , AWS_SESSION_TOKEN as enviroment variables. More information on how to give access can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 
-4). From your terraform code working directory do "cloudfix-linter init".
+#### 3. This version works with CloudFix v3 so make sure you have credentials to https://app.cloudfix.com/
+
+#### 4. From your terraform code working directory do "cloudfix-linter init".
 ```bash
 cd my-terraform-project
 cloudfix-linter init
 cloudfix-linter --help
 ```
 
-5). Run "terraform apply" to deploy the resources from your terraform code working directory.
+#### 5. Run "terraform apply" to deploy the resources from your terraform code working directory.
 ```bash
 terraform apply
 ```
 
-6). To get recommendations from cloudfix and see them through CLI run command 
+#### 6. To get recommendations from cloudfix and see them through CLI run command 
 ```
 cloudfix-linter flagRecco
 ```
@@ -86,7 +87,7 @@ This mapping is currently part of the code itself, but can be easily hosted onli
 
 ## Contributing
 
-The project uses a custom ruleset written for [TfLint](https://github.com/terraform-linters/tflint/blob/master/docs/developer-guide/architecture.md) to flag reccomendations from cloudfix. The github repo for the ruleset can be accessed [here] (https://github.com/trilogy-group/tflint-ruleset-template)
+The project uses a custom ruleset written for [TfLint](https://github.com/terraform-linters/tflint/blob/master/docs/developer-guide/architecture.md) to flag reccomendations from cloudfix. The github repo for the ruleset can be accessed [here](https://github.com/trilogy-group/tflint-ruleset-template)
 
 ### Local debugging
 ```bash
