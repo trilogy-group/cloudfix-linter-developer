@@ -19,16 +19,20 @@ It is a command line tool that flags optimisation oppurtunities detected by Clou
 ```
 Invoke-WebRequest -URI https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/install.ps1 -OutFile install.ps1; ./install.ps1 (pwd).path
 ```
-- Linux and Devspaces
+- Linux
 ```bash
-read -sp "Enter sudo password" pass  &&  wget -O - https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/install.sh | bash /dev/stdin $pass
+read -sp "Enter sudo password: " pass  &&  wget -O - https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/install.sh | bash /dev/stdin $pass
  ```
+ - Devspaces
+```
+wget -O - https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/install.sh | bash
+```
 
 #### 2. Ensure that terraform can access your AWS account. You can user one of the following:
 
 - Devconnect with [saml2aws](https://github.com/Versent/saml2aws)
 - Set the access key and the secret key inside of the provider "aws" block eg: in the main.tf file provider "aws" { region = "us-east-1" access_key = "my-access-key" secret_key = "my-secret-key" } 
-- Set and export AWS_ACCESS_KEY_ID , AWS_SECRET_ACCESS_KEY , AWS_SESSION_TOKEN as enviroment variables. More information on how to give access can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+- Set and export AWS_ACCESS_KEY_ID , AWS_SECRET_ACCESS_KEY , AWS_SESSION_TOKEN as enviroment variables. More information on how to give access can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs).
 
 #### 3. This version works with CloudFix v3 so make sure you have credentials to https://app.cloudfix.com/
 
