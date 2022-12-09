@@ -234,6 +234,78 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 						"EfsInfrequentAccess": {
 							"Attribute Type": "NoAttributeMarker",
 							"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
+						},
+						"IoToGp3": {
+							"Attribute Type": "type",
+							"Attribute Value": "gp3"
+						},
+						"DuplicateCloudTrail": {
+							"Attribute Type": "enabled",
+							"Attribute Value": "false"
+						},
+						"UnusedEBSVolumes": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Unattached EBS Volumes, Remove this to save the cost"
+						},
+						"VpcIdleEndpoint": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Idle VPC Endpoint, Remove this to save the cost"
+						},
+						"EfsIntelligentTiering": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
+						},
+						"NeptuneCleanupIdleClusters": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Idle Neptune Cluster, Remove this to save the cost"
+						},
+						"InstallSSMAgentWindows": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Install SSM agent for Windows"
+						},
+						"InstallSSMAgentLinuxMacSSH": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Install SSM agent for Mac and Linux via SSH"
+						},
+						"VpcIdleNatGateway": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Idle VPC NAT Gateway, Remove this to save the cost"
+						},
+						"FixVPCDNSForAgents": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "FixVPCDNSForAgents"
+						},
+						"EsOptimizeStorage": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Shrink AWS OpenSearch volumes"
+						},
+						"S3DDBTrafficToGWEndpoint": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "S3/DynamoDB Traffic to Gateway Endpoint"
+						},
+						"DynamoDbProvisioning": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "DynamoDB Use Provisioning and Autoscaling"
+						},
+						"Ec2LowRiskRightsize": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Ec2LowRiskRightsize"
+						},
+						"ArchiveOldEbsVolumeSnapshots": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Archive old EBS volume snapshots"
+						},
+						"DynamoDbInfrequentAccess": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "DynamoDB Infrequent Access"
+						},
+						"FixInstanceProfileForAgents": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "FixInstanceProfileForAgents"
+						},
+						"Es79Graviton": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Elasticsearch to Graviton"
 						}
 						}`)
 	mapping = c.createMap(reccos, attrMapping)
