@@ -146,7 +146,21 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 			//So we are resorting to showing the reccomendation against the resource name with the description for the oppurtunity
 			attributeTypeToValue["NoAttributeMarker"] = recco.OpportunityDescription
 		}
-		mapping[awsID] = attributeTypeToValue
+		_, exist := mapping[awsID]
+		if (exist==true) {
+			// awsID has multiple recommendations associated with it
+			// merge all the recommendations
+			for key, value := range attributeTypeToValue {
+				_, exits := mapping[awsID][key]
+				if (exits) {
+					mapping[awsID][key] += "$" + value
+				} else {
+					mapping[awsID][key] = value
+				}
+			}
+		} else {
+			mapping[awsID] = attributeTypeToValue
+		}
 	}
 	return mapping
 }
@@ -231,11 +245,11 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string]string, *customErro
 						},
 						"UnusedEBSVolumes": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Unattached EBS Volumes. Remove this to save the cost"
+							"Attribute Value": "Unattached EBS Volumes, Remove this to save the cost"
 						},
 						"VpcIdleEndpoint": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Idle VPC Endpoint. Remove this to save the cost"
+							"Attribute Value": "Idle VPC Endpoint, Remove this to save the cost"
 						},
 						"EfsIntelligentTiering": {
 							"Attribute Type": "NoAttributeMarker",

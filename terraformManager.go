@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -100,12 +99,11 @@ func (t *TerraformManager) getTagToIDMapping() (map[string]string, error) {
 	var TfLintOutData []byte
 	var errT error
 	var modeBoolval bool
-	val, present := os.LookupEnv("CLOUDFIX_FILE")
+	val, present := os.LookupEnv("CLOUDFIX_TERRAFORM_LOCAL")
 	if present {
 		modeBoolval, _ = strconv.ParseBool(val)
 	}
 	if present && modeBoolval {
-		fmt.Printf("Reaching You %s\n", val)
 		TfLintOutData, errT = os.ReadFile("tf.show")
 	} else {
 		TfLintOutData, errT = exec.Command(terraform(), "show", "-json").Output()
