@@ -1,26 +1,29 @@
 package main
 
 import (
-	"os/exec"
-	"strings"
 	"os"
-	"runtime"
+	"os/exec"
 	"path/filepath"
+	"runtime"
+	"strconv"
+	"strings"
+
 	tfjson "github.com/hashicorp/terraform-json"
 )
 
 type TerraformManager struct {
 	//No data types required
 }
+
 // Giving reference to terraform.exe file if present in windows
-func terraform() string{
-	if(runtime.GOOS=="windows"){
+func terraform() string {
+	if runtime.GOOS == "windows" {
 		ex, err := os.Executable()
 		if err != nil {
 			panic(err)
 		}
 		basePath := filepath.Dir(ex)
-		return basePath+"\\terraform.exe"
+		return basePath + "\\terraform.exe"
 	}
 	return "terraform"
 }
@@ -86,8 +89,8 @@ func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagTo
 	}
 	var tagCount int = tagCountMap[yorTagTrim]
 	tagCountMap[yorTagTrim] += 1
-	if tagCount!=0 {
-		yorTagTrim += "$"+strconv.Itoa(tagCount)
+	if tagCount != 0 {
+		yorTagTrim += "$" + strconv.Itoa(tagCount)
 	}
 	tagToID[yorTagTrim] = AWSResourceIDTrim
 }
