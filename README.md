@@ -17,15 +17,15 @@ It is a command line tool that flags optimisation oppurtunities detected by Clou
 #### 1. Run command 
 - Windows
 ```
-Invoke-WebRequest -URI https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/install.ps1 -OutFile install.ps1; ./install.ps1 (pwd).path
+Invoke-WebRequest -URI https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.ps1 -OutFile install.ps1; ./install.ps1 (pwd).path
 ```
 - Linux
 ```bash
-read -sp "Enter sudo password: " pass  &&  wget -O - https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/install.sh | bash /dev/stdin $pass
+read -sp "Enter sudo password: " pass  &&  wget -O - https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.sh | bash /dev/stdin $pass
  ```
  - Devspaces
 ```
-wget -O - https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/install.sh | bash
+wget -O - https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.sh | bash
 ```
 
 #### 2. Ensure that terraform can access your AWS account. You can user one of the following:
@@ -34,7 +34,8 @@ wget -O - https://github.com/trilogy-group/cloudfix-linter-developer/releases/la
 - Set the access key and the secret key inside of the provider "aws" block eg: in the main.tf file provider "aws" { region = "us-east-1" access_key = "my-access-key" secret_key = "my-secret-key" } 
 - Set and export AWS_ACCESS_KEY_ID , AWS_SECRET_ACCESS_KEY , AWS_SESSION_TOKEN as enviroment variables. More information on how to give access can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs).
 
-#### 3. This version works with CloudFix v3 so make sure you have credentials to https://app.cloudfix.com/
+#### 3. Cloudfix Credentials
+This version works with CloudFix v3 so make sure you have credentials to https://app.cloudfix.com/
 
 #### 4. From your terraform code working directory do "cloudfix-linter init".
 ```bash
@@ -50,7 +51,7 @@ terraform apply
 
 #### 6. To get recommendations from cloudfix and see them through CLI run command 
 ```
-cloudfix-linter flagRecco
+cloudfix-linter recco
 ```
 
 Note :- If you make any changes to your terraform code, You first have to deploy them using “terraform apply” and then run “cloudfix-linter” command again through working directory of your terraform code to see reccomendations being flagged according to recent changes. 
@@ -81,8 +82,9 @@ Sample mapping json:
 			"Attribute Type": "NoAttributeMarker",
 			"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
 		}
-	}
+}
 ```
+Detailed mapping can be viewed [here](https://github.com/trilogy-group/cloudfix-linter/blob/6ed0a514dc3dd8c865f81e2dcddda456d3012fca/cloudfixIntegration/cloudfixManager.go#L221).
 
 For each new oppurtunity type, create a new block in the json by its name. If the opportunity type targets an attribute in specific, put in the name of the attribute for the Attribute Type. If it does not target any attribute, put in "NoAttributeMarker" instead. For the Attribute Value, if that needs to picked up from the parameters field of the cloudfix recommendation, set that as parameters.{Name of field within parameters block} (for reference take a look at the block for Ec2IntelToAmd). In case the value for the attribute is static and need not be picked up from the parameters field, it can be hardcoded directly in the json (for reference take a look at the block for Gp2Gp3). If the oppurtunity type does not target any attribute in specific, for the attribute value, put in the message that you want displayed to the user (for reference see the block for EfsInfrequentAccess)
 
