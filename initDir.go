@@ -15,7 +15,7 @@ func initDir(default_recco bool) error {
 	config {
 		disabled_by_default = %t
 	}
-	plugin "developer"{
+	plugin "template"{
 		enabled = true
 		version = "0.2.4"
 		source  = "github.com/trilogy-group/tflint-ruleset-template"
