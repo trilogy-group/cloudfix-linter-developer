@@ -35,19 +35,21 @@ func (p *Persistance) store_reccos(reccosMap map[string]map[string][]string, fil
 	return nil
 }
 
-func (p *Persistance) store_tagMap(tagToIDMap map[string]string, fileNameForTagMap string) error {
+func (p *Persistance) store_tagMap(tagToIDMap map[string]map[string]string, fileNameForTagMap string) error {
 	file, err := os.Create(fileNameForTagMap)
 	if err != nil {
 		//Add error log
 		return err
 	}
-	for key, value := range tagToIDMap {
-		toWrite := fmt.Sprintf("%s->%s\n", key, value)
-		_, err := file.WriteString(toWrite)
-		if err != nil {
-			//Add Error Log
-			return err
-		}
+	for key, innerMap := range tagToIDMap {
+		for innerKey, resourceId := range innerMap {
+			toWrite := fmt.Sprintf("%s->%s->%s\n", key, innerKey, resourceId)
+			_, err := file.WriteString(toWrite)
+			if err != nil {
+				//Add Error Log
+				return err
+			}
+		} 
 	}
 	//Add Info Log
 	return nil
