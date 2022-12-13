@@ -62,13 +62,16 @@ type Orchestrator struct {
 
 // Giving reference to tflint.exe file if present in windows
 func tflint() string {
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	basePath := filepath.Dir(ex)
 	if runtime.GOOS == "windows" {
-		ex, err := os.Executable()
-		if err != nil {
-			panic(err)
-		}
-		basePath := filepath.Dir(ex)
 		return basePath + "\\tflint.exe"
+	}
+	if runtime.GOOS == "linux" {
+		return basePath + "/tflint"
 	}
 	return "tflint"
 }
