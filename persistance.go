@@ -19,9 +19,9 @@ func (p *Persistance) store_reccos(reccosMap map[string]map[string][]string, fil
 	}
 	for key, innerMap := range reccosMap {
 		for innerKey, innerList := range innerMap {
-			toWrite := fmt.Sprintf("%s:%s", key, innerKey)
+			toWrite := fmt.Sprintf("%s->%s", key, innerKey)
 			for _, innerValue := range innerList {
-				toWrite = toWrite + fmt.Sprintf(":%s",innerValue)
+				toWrite = toWrite + fmt.Sprintf("->%s",innerValue)
 			}
 			toWrite = toWrite + "\n"
 			_, err := file.WriteString(toWrite)

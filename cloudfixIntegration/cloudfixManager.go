@@ -286,11 +286,11 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 							"Attribute Value": "S3/DynamoDB Traffic to Gateway Endpoint"
 						},
 						"DynamoDbProvisioning": {
-							"Attribute Type": "NoAttributeMarker",
+							"Attribute Type": "billing_mode",
 							"Attribute Value": "DynamoDB Use Provisioning and Autoscaling"
 						},
 						"Ec2LowRiskRightsize": {
-							"Attribute Type": "NoAttributeMarker",
+							"Attribute Type": "size",
 							"Attribute Value": "Ec2LowRiskRightsize"
 						},
 						"ArchiveOldEbsVolumeSnapshots": {
@@ -298,7 +298,7 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 							"Attribute Value": "Archive old EBS volume snapshots"
 						},
 						"DynamoDbInfrequentAccess": {
-							"Attribute Type": "NoAttributeMarker",
+							"Attribute Type": "billing_mode",
 							"Attribute Value": "DynamoDB Infrequent Access"
 						},
 						"FixInstanceProfileForAgents": {
@@ -306,7 +306,7 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 							"Attribute Value": "FixInstanceProfileForAgents"
 						},
 						"Es79Graviton": {
-							"Attribute Type": "NoAttributeMarker",
+							"Attribute Type": "instance_type",
 							"Attribute Value": "Elasticsearch to Graviton"
 						}
 						}`)
