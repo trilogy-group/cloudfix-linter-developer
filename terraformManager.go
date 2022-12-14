@@ -27,9 +27,8 @@ func terraform() string {
 	}
 	return "terraform"
 }
-func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]string, error) {
-	tagToID := make(map[string]string)
-	tagCountMap := make(map[string]int)
+func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]map[string]string, error) {
+	tagToID := make(map[string]map[string]string)
 	var tfState tfjson.State
 	errU := tfState.UnmarshalJSON(TfLintOutData)
 	if errU != nil {
@@ -42,21 +41,21 @@ func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]string, 
 	//for root module resources
 	for _, rootResource := range tfState.Values.RootModule.Resources {
 		if rootResource != nil {
-			t.addPairToTagMap(rootResource, tagToID, tagCountMap)
+			t.addPairToTagMap(rootResource, tagToID)
 		}
 	}
 	// for all the resources present in child modules under the root module
 	for _, childModule := range tfState.Values.RootModule.ChildModules {
 		for _, childResource := range childModule.Resources {
 			if childResource != nil {
-				t.addPairToTagMap(childResource, tagToID, tagCountMap)
+				t.addPairToTagMap(childResource, tagToID)
 			}
 		}
 	}
 	return tagToID, nil
 }
 
-func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagToID map[string]string, tagCountMap map[string]int) {
+func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagToID map[string]map[string]string) {
 	AWSResourceIDRaw, ok := resource.AttributeValues["id"]
 	if !ok {
 		//log that id is not present
@@ -87,16 +86,28 @@ func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagTo
 	if yorTagTrim == "" || AWSResourceIDTrim == "" {
 		return
 	}
-	var tagCount int = tagCountMap[yorTagTrim]
-	tagCountMap[yorTagTrim] += 1
-	if tagCount != 0 {
-		yorTagTrim += "$" + strconv.Itoa(tagCount)
+
+	var resourceType string = resource.Type
+	resourceType = strings.Trim(resourceType,"\n")
+	resourceType = strings.Trim(resourceType,`"`)
+
+	var resourceName string = resource.Name
+	resourceName = strings.Trim(resourceName,"\n")
+	resourceName = strings.Trim(resourceName,`"`)
+
+	innerMapKey := resourceType+"&"+resourceName
+
+	_, exists := tagToID[yorTagTrim]
+
+	if (!exists) {
+		tagToID[yorTagTrim]= map[string]string{}
 	}
-	tagToID[yorTagTrim] = AWSResourceIDTrim
+
+	tagToID[yorTagTrim][innerMapKey] = AWSResourceIDTrim
 }
 
-func (t *TerraformManager) getTagToIDMapping() (map[string]string, error) {
-	tagToID := make(map[string]string)
+func (t *TerraformManager) getTagToIDMapping() (map[string]map[string]string, error) {
+	tagToID := make(map[string]map[string]string)
 	var TfLintOutData []byte
 	var errT error
 	var modeBoolval bool
