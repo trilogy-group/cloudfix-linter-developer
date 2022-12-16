@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/trilogy-group/cloudfix-linter/cloudfixIntegration"
-	"github.com/trilogy-group/cloudfix-linter/logger"
+	"github.com/trilogy-group/cloudfix-linter-developer/cloudfixIntegration"
+	"github.com/trilogy-group/cloudfix-linter-developer/logger"
 )
 
 // Structures for Marshalling JSON outputs

@@ -32,7 +32,7 @@ Write-Output "Terraform installed successfully"
 
 
 # Installing yor_trace 
-$YOR_VERSION="0.1.156"
+$YOR_VERSION="0.1.158"
 $FILE_PATH=$OUT_PATH+"yor_trace.zip"
 Write-Output "Installing yor_trace........"
 Invoke-WebRequest -URI https://github.com/bridgecrewio/yor/releases/download/${YOR_VERSION}/yor_${YOR_VERSION}_${PLATFORM}.zip -OutFile $FILE_PATH
@@ -59,7 +59,7 @@ Write-Output "Tflint installed successfully"
 # Install cloudfix-linter
 Write-Output "Installing cloudfix-linter........"
 $OUT_PATH_CFT=$OUT_PATH+"cloudfix-linter.exe"
-Invoke-WebRequest -URI https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/cloudfix-linter_${PLATFORM}.exe -OutFile $OUT_PATH_CFT
+Invoke-WebRequest -URI https://github.com/trilogy-group/cloudfix-linter-developer/releases/latest/download/cloudfix-linter-developer_${PLATFORM}.exe -OutFile $OUT_PATH_CFT
 $TEMP=$OUT_PATH+"cloudfix-linter.exe"
 Set-Alias -Name cloudfix-linter -Value $TEMP -Scope Global
 Write-Output "Cloudfix-linter installed successfully"

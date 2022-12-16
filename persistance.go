@@ -10,7 +10,6 @@ type Persistance struct {
 }
 
 //Member functions for the class follow:
-
 func (p *Persistance) store_reccos(reccosMap map[string]map[string][]string, fileNameForReccos string) error {
 	file, err := os.Create(fileNameForReccos)
 	if err != nil {

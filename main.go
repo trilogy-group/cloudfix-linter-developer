@@ -10,7 +10,7 @@ import (
 	"runtime"
 
 	"github.com/spf13/cobra"
-	"github.com/trilogy-group/cloudfix-linter/logger"
+	"github.com/trilogy-group/cloudfix-linter-developer/logger"
 )
 
 func yor() string {

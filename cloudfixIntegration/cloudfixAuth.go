@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/trilogy-group/cloudfix-linter/logger"
+	"github.com/trilogy-group/cloudfix-linter-developer/logger"
 )
 
 type CloudfixAuth struct {
