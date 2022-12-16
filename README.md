@@ -19,14 +19,11 @@ It is a command line tool that flags optimisation oppurtunities detected by Clou
 ```
 Invoke-WebRequest -URI https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.ps1 -OutFile install.ps1; ./install.ps1 (pwd).path
 ```
-- Linux
+- Linux and Devspaces
 ```bash
 wget -O - https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.sh | bash
  ```
- - Devspaces
-```
-wget -O - https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.sh | bash
-```
+
 
 #### 2. Ensure that terraform can access your AWS account. You can user one of the following:
 
