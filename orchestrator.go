@@ -62,13 +62,16 @@ type Orchestrator struct {
 
 // Giving reference to tflint.exe file if present in windows
 func tflint() string {
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	basePath := filepath.Dir(ex)
 	if runtime.GOOS == "windows" {
-		ex, err := os.Executable()
-		if err != nil {
-			panic(err)
-		}
-		basePath := filepath.Dir(ex)
 		return basePath + "\\tflint.exe"
+	}
+	if runtime.GOOS == "linux" {
+		return basePath + "/tflint"
 	}
 	return "tflint"
 }
@@ -108,7 +111,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 	var persist Persistance
 	var cloudfixMan cloudfixIntegration.CloudfixManager
 	var terraMan TerraformManager
-	reccosFileName := "recos.txt"
+	reccosFileName := "cloudfix-linter-recos.txt"
 	reccosMapping, errC := cloudfixMan.GetReccos()
 	if errC != nil {
 		logger.Info("Something went wrong. More logs in the log directory. ", errC)
@@ -128,7 +131,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 		panic(errP)
 	}
 	os.Setenv("ReccosMapFile", reccosFileName)
-	tagFileName := "tagsID.txt"
+	tagFileName := "cloudfix-linter-tagsID.txt"
 	tagToIDMap, errG := terraMan.getTagToIDMapping()
 	if errG != nil {
 		panic(errG)
