@@ -215,6 +215,16 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 		}
 		var errT *customError
 		reccos, errT = c.getReccosFromCloudfix(token)
+		
+		// file, _ := os.Create("CloudFixReccos.json")
+		// defer file.Close()
+		var responses []ResponseReccos
+		if len(reccos) != 0 {
+			json.Unmarshal(reccos, &responses) //the reccomendations from cloudfix are being unmarshalled
+			file, _ := json.MarshalIndent(responses, "", " ")
+			_ = ioutil.WriteFile("CloudFixReccos.json", file, 0644)
+		}
+		
 		if errT != nil {
 			return mapping, errT
 		}
@@ -281,7 +291,7 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 							"Attribute Value": "Shrink AWS OpenSearch volumes"
 						},
 						"S3DDBTrafficToGWEndpoint": {
-							"Attribute Type": "NoAttributeMarker",
+							"Attribute Type": "GlobalAttributeMarker",
 							"Attribute Value": "S3/DynamoDB Traffic to Gateway Endpoint"
 						},
 						"DynamoDbProvisioning": {
@@ -293,7 +303,7 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 							"Attribute Value": "Ec2LowRiskRightsize"
 						},
 						"ArchiveOldEbsVolumeSnapshots": {
-							"Attribute Type": "NoAttributeMarker",
+							"Attribute Type": "GlobalAttributeMarker",
 							"Attribute Value": "Archive old EBS volume snapshots"
 						},
 						"DynamoDbInfrequentAccess": {
@@ -306,7 +316,27 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 						},
 						"Es79Graviton": {
 							"Attribute Type": "cluster_config.instance_type",
-							"Attribute Value": "Elasticsearch to Graviton"
+							"Attribute Value": "graviton supported instances."
+						},
+						"CloudFrontCompression": {
+							"Attribute Type": "ordered_cache_behavior.compress",
+							"Attribute Value": "true"
+						},
+						"ElbCleanUpIdle": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Idle Elb, cleanup to save cost."
+						},
+						"EC2CleanupUnusedAMIs": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Cleanup unused AMIs"
+						},
+						"OpenSearchRightSizeClusters": {
+							"Attribute Type": "cluster_config.instance_type",
+							"Attribute Value": ""
+						},
+						"RDSRightSizeMySqlClusters": {
+							"Attribute Type": "cluster_config.instance_type",
+							"Attribute Value": ""
 						}
 						}`)
 	mapping = c.createMap(reccos, attrMapping)
