@@ -17,13 +17,16 @@ type TerraformManager struct {
 
 // Giving reference to terraform.exe file if present in windows
 func terraform() string {
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	basePath := filepath.Dir(ex)
 	if runtime.GOOS == "windows" {
-		ex, err := os.Executable()
-		if err != nil {
-			panic(err)
-		}
-		basePath := filepath.Dir(ex)
 		return basePath + "\\terraform.exe"
+	}
+	if runtime.GOOS == "linux" {
+		return basePath + "/terraform"
 	}
 	return "terraform"
 }
