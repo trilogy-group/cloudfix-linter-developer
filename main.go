@@ -15,14 +15,14 @@ import (
 
 func yor() string {
 	ex, err := os.Executable()
-		if err != nil {
-			panic(err)
-		}
-		basePath := filepath.Dir(ex)
+	if err != nil {
+		panic(err)
+	}
+	basePath := filepath.Dir(ex)
 	if runtime.GOOS == "windows" {
 		return basePath + "\\yor.exe"
 	}
-	if runtime.GOOS == "linux"{
+	if runtime.GOOS == "linux" {
 		return basePath + "/yor"
 	}
 	return "yor"
