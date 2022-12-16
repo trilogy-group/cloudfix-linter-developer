@@ -147,12 +147,12 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 			attributeTypeToValue["NoAttributeMarker"] = append(attributeTypeToValue["NoAttributeMarker"], recco.OpportunityDescription)
 		}
 		_, exist := mapping[awsID]
-		if (exist==true) {
+		if exist == true {
 			// awsID has multiple recommendations associated with it
 			// merge all the recommendations
 			for key, value := range attributeTypeToValue {
 				_, exits := mapping[awsID][key]
-				if (exits) {
+				if exits {
 					for _, val := range value {
 						mapping[awsID][key] = append(mapping[awsID][key], val)
 					}
@@ -203,7 +203,8 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 
 		reccos, errR = ioutil.ReadFile(currPWDStrip1)
 		if errR != nil {
-			return mapping, &customError{GENERIC_ERROR, "Could not read reccos from file "}
+			//Add Error Log
+			return mapping, &customError{GENERIC_ERROR, "Could not read reccos from file: " + currPWDStrip1}
 		}
 	} else {
 		dlog.Info("CLOUDFIX_FILE mode off. Calling CLoudFix")
@@ -214,6 +215,16 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 		}
 		var errT *customError
 		reccos, errT = c.getReccosFromCloudfix(token)
+		
+		// file, _ := os.Create("CloudFixReccos.json")
+		// defer file.Close()
+		var responses []ResponseReccos
+		if len(reccos) != 0 {
+			json.Unmarshal(reccos, &responses) //the reccomendations from cloudfix are being unmarshalled
+			file, _ := json.MarshalIndent(responses, "", " ")
+			_ = ioutil.WriteFile("CloudFixReccos.json", file, 0644)
+		}
+		
 		if errT != nil {
 			return mapping, errT
 		}
@@ -280,23 +291,23 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 							"Attribute Value": "Shrink AWS OpenSearch volumes"
 						},
 						"S3DDBTrafficToGWEndpoint": {
-							"Attribute Type": "NoAttributeMarker",
+							"Attribute Type": "GlobalAttributeMarker",
 							"Attribute Value": "S3/DynamoDB Traffic to Gateway Endpoint"
 						},
 						"DynamoDbProvisioning": {
-							"Attribute Type": "NoAttributeMarker",
+							"Attribute Type": "billing_mode",
 							"Attribute Value": "DynamoDB Use Provisioning and Autoscaling"
 						},
 						"Ec2LowRiskRightsize": {
-							"Attribute Type": "NoAttributeMarker",
+							"Attribute Type": "size",
 							"Attribute Value": "Ec2LowRiskRightsize"
 						},
 						"ArchiveOldEbsVolumeSnapshots": {
-							"Attribute Type": "NoAttributeMarker",
+							"Attribute Type": "GlobalAttributeMarker",
 							"Attribute Value": "Archive old EBS volume snapshots"
 						},
 						"DynamoDbInfrequentAccess": {
-							"Attribute Type": "NoAttributeMarker",
+							"Attribute Type": "billing_mode",
 							"Attribute Value": "DynamoDB Infrequent Access"
 						},
 						"FixInstanceProfileForAgents": {
@@ -304,8 +315,28 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 							"Attribute Value": "FixInstanceProfileForAgents"
 						},
 						"Es79Graviton": {
+							"Attribute Type": "cluster_config.instance_type",
+							"Attribute Value": "graviton supported instances."
+						},
+						"CloudFrontCompression": {
+							"Attribute Type": "ordered_cache_behavior.compress",
+							"Attribute Value": "true"
+						},
+						"ElbCleanUpIdle": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Elasticsearch to Graviton"
+							"Attribute Value": "Idle Elb, cleanup to save cost."
+						},
+						"EC2CleanupUnusedAMIs": {
+							"Attribute Type": "NoAttributeMarker",
+							"Attribute Value": "Cleanup unused AMIs"
+						},
+						"OpenSearchRightSizeClusters": {
+							"Attribute Type": "cluster_config.instance_type",
+							"Attribute Value": ""
+						},
+						"RDSRightSizeMySqlClusters": {
+							"Attribute Type": "cluster_config.instance_type",
+							"Attribute Value": ""
 						}
 						}`)
 	mapping = c.createMap(reccos, attrMapping)

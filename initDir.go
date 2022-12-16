@@ -17,7 +17,7 @@ func initDir(default_recco bool) error {
 	}
 	plugin "developer"{
 		enabled = true
-		version = "0.3.6"
+		version = "1.0.0"
 		source  = "github.com/trilogy-group/tflint-ruleset-developer"
 	}
 	rule "flag_reccomend"{

@@ -17,7 +17,6 @@ Yor is built to run as a [GitHub Action](https://github.com/bridgecrewio/yor-act
 
 It is a command line tool that flags optimisation oppurtunities detected by Cloudfix for the resources that have been deployed using terraform. It'll either flag the specific attribute within the resource that needs to be changed (along with what it needs to be changed to), or in the case that such an attribute does not exist, describe the oppurtunity against the name of the resource about which the oppurtunity is present. It will identify the resources deployed by remote modules and provide recommendations for them.
 
-
 ## Demo
 [![](docs/yor_tag_and_trace_recording.gif)](https://raw.githubusercontent.com/bridgecrewio/yor/main/docs/yor_tag_and_trace_recording.gif)
 
@@ -30,11 +29,15 @@ It is a command line tool that flags optimisation oppurtunities detected by Clou
 ```
 Invoke-WebRequest -URI https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.ps1 -OutFile install.ps1; ./install.ps1 (pwd).path
 ```
+
 - Linux and Devspaces
 ```bash
-wget -O - https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.sh | bash
+read -sp "Enter sudo password: " pass  &&  wget -O - https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.sh | bash /dev/stdin $pass
  ```
-
+ - Devspaces
+```
+wget -O - https://github.com/trilogy-group/cloudfix-linter/releases/latest/download/install.sh | bash
+```
 
 #### 2. Ensure that terraform can access your AWS account. You can user one of the following:
 
@@ -131,6 +134,7 @@ Pre-commit
 			"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
 		}
 }
+
 ```
 Detailed mapping can be viewed [here](https://github.com/trilogy-group/cloudfix-linter/blob/6ed0a514dc3dd8c865f81e2dcddda456d3012fca/cloudfixIntegration/cloudfixManager.go#L221).
 
@@ -169,6 +173,7 @@ yor tag -d path/to/files
 yor tag -d path/to/files --skip-dirs path/to/files/skip,path/to/files/another/skip2
 ## Run yor on the directory path/to/files, skipping path/to/files/skip/ and path/to/files/another/skip2/
 ```
+Detailed mapping can be viewed [here](https://github.com/trilogy-group/cloudfix-linter/blob/6ed0a514dc3dd8c865f81e2dcddda456d3012fca/cloudfixIntegration/cloudfixManager.go#L221).
 
 `list-tag`
 
