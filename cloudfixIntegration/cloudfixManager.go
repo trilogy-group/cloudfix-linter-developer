@@ -296,11 +296,7 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 						},
 						"DynamoDbProvisioning": {
 							"Attribute Type": "billing_mode",
-							"Attribute Value": "DynamoDB Use Provisioning and Autoscaling"
-						},
-						"Ec2LowRiskRightsize": {
-							"Attribute Type": "size",
-							"Attribute Value": "Ec2LowRiskRightsize"
+							"Attribute Value": "PROVISIONED"
 						},
 						"ArchiveOldEbsVolumeSnapshots": {
 							"Attribute Type": "GlobalAttributeMarker",
@@ -308,15 +304,11 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 						},
 						"DynamoDbInfrequentAccess": {
 							"Attribute Type": "billing_mode",
-							"Attribute Value": "DynamoDB Infrequent Access"
+							"Attribute Value": "PAY_PER_REQUEST"
 						},
 						"FixInstanceProfileForAgents": {
 							"Attribute Type": "NoAttributeMarker",
 							"Attribute Value": "FixInstanceProfileForAgents"
-						},
-						"Es79Graviton": {
-							"Attribute Type": "cluster_config.instance_type",
-							"Attribute Value": "graviton supported instances."
 						},
 						"CloudFrontCompression": {
 							"Attribute Type": "ordered_cache_behavior.compress",
@@ -329,14 +321,6 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 						"EC2CleanupUnusedAMIs": {
 							"Attribute Type": "NoAttributeMarker",
 							"Attribute Value": "Cleanup unused AMIs"
-						},
-						"OpenSearchRightSizeClusters": {
-							"Attribute Type": "cluster_config.instance_type",
-							"Attribute Value": ""
-						},
-						"RDSRightSizeMySqlClusters": {
-							"Attribute Type": "cluster_config.instance_type",
-							"Attribute Value": ""
 						}
 						}`)
 	mapping = c.createMap(reccos, attrMapping)
