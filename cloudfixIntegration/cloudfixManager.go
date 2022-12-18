@@ -216,15 +216,6 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 		var errT *customError
 		reccos, errT = c.getReccosFromCloudfix(token)
 		
-		// file, _ := os.Create("CloudFixReccos.json")
-		// defer file.Close()
-		var responses []ResponseReccos
-		if len(reccos) != 0 {
-			json.Unmarshal(reccos, &responses) //the reccomendations from cloudfix are being unmarshalled
-			file, _ := json.MarshalIndent(responses, "", " ")
-			_ = ioutil.WriteFile("CloudFixReccos.json", file, 0644)
-		}
-		
 		if errT != nil {
 			return mapping, errT
 		}
