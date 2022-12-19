@@ -198,6 +198,7 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 			currPWD, _ := exec.Command("pwd").Output()
 			currPWDStr = string(currPWD[:])
 			currPWDStrip = strings.Trim(currPWDStr, "\n")
+			currPWDStrip = strings.TrimSuffix(currPWDStrip, "cloudfix-linter")
 			currPWDStrip1 = currPWDStrip + "/reccos.json"
 		}
 
