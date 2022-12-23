@@ -22,10 +22,7 @@ func yor() string {
 	if runtime.GOOS == "windows" {
 		return basePath + "\\yor.exe"
 	}
-	if runtime.GOOS == "linux" {
-		return basePath + "/yor"
-	}
-	return "yor"
+	return basePath + "/yor"
 }
 
 // rootCmd represents the base command when called without any subcommands

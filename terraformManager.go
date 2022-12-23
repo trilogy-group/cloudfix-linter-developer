@@ -25,10 +25,7 @@ func terraform() string {
 	if runtime.GOOS == "windows" {
 		return basePath + "\\terraform.exe"
 	}
-	if runtime.GOOS == "linux" {
-		return basePath + "/terraform"
-	}
-	return "terraform"
+	return basePath + "/terraform"
 }
 func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]map[string]string, error) {
 	tagToID := make(map[string]map[string]string)
