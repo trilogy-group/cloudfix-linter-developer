@@ -23,7 +23,7 @@ else
 fi
 PLATFORM=$OS
 PLATFORM+="_"
-PLATFORM+=$Arch
+PLATFORM+=$ARCH
 
 rm -r cloudfix-linter
 mkdir cloudfix-linter
