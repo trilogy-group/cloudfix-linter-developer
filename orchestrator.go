@@ -70,10 +70,7 @@ func tflint() string {
 	if runtime.GOOS == "windows" {
 		return basePath + "\\tflint.exe"
 	}
-	if runtime.GOOS == "linux" {
-		return basePath + "/tflint"
-	}
-	return "tflint"
+	return basePath + "/tflint"
 }
 
 // Memeber functions for the Orchestrator class follow:

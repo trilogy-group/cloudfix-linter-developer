@@ -10,6 +10,8 @@ builds:
       - linux_arm64
       - windows_386
       - windows_amd64
+      - darwin_amd64
+      - darwin_arm64
 archives:
   - id: zip
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
