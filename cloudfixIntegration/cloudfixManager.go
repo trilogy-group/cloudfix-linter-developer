@@ -44,6 +44,14 @@ type ResponseReccos struct {
 	LastUpdatedDate        string
 }
 
+type Recommendation struct {
+	Recommendation map[string][]IdealAttributes
+}
+
+// type RecommendationDetails struct {
+// 	AttributeValue string
+// }
+
 type ErrorCodes int
 
 const (
@@ -99,8 +107,8 @@ func (c *CloudfixManager) getReccosFromCloudfix(token string) ([]byte, *customEr
 	return reccos, nil
 }
 
-func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[string]map[string][]string {
-	mapping := map[string]map[string][]string{} //this is the map that has to be returned in the end
+func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[string]Recommendation {
+	mapping := map[string]Recommendation{} //this is the map that has to be returned in the end
 	var responses []ResponseReccos
 	if len(reccos) == 0 {
 		//log that no reccomendations have been received
@@ -120,9 +128,11 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 	for _, recco := range responses { //iterating through the recommendations one by one
 		awsID := recco.ResourceId
 		oppurType := recco.OpportunityType
-		attributeTypeToValue := map[string][]string{}
+		attributeTypeToValue := map[string][]IdealAttributes{}
 		attributes, ok := attrMap[oppurType]
+		var recommendationDetails IdealAttributes
 		if ok {
+			recommendationDetails = attributes
 			//known oppurtunity type has been encountered
 			atrValueByPeriod := strings.Split(attributes.AttributeValue, ".")
 			if atrValueByPeriod[0] == "parameters" {
@@ -132,49 +142,48 @@ func (c *CloudfixManager) createMap(reccos []byte, attrMapping []byte) map[strin
 					//log that attribute is not present
 					//if the code reaches here, then this means that the strategy for parsing has not been made correctly.
 					// So we are resorting to showing the reccomendation against the resource name with the description for the oppurtunity
-					attributeTypeToValue["NoAttributeMarker"] = append(attributeTypeToValue["NoAttributeMarker"], recco.OpportunityDescription)
+					recommendationDetails.AttributeValue = recco.OpportunityDescription
+					recommendationDetails.AttributeType = "NoAttributeMarker"
 				} else {
 					idealAtrValue := valueFromReccos.(string) //extracting the ideal value as a string from cloudfix reccomendations
-					attributeTypeToValue[attributes.AttributeType] = append(attributeTypeToValue[attributes.AttributeType], idealAtrValue)
+					recommendationDetails.AttributeValue = idealAtrValue
 				}
-			} else {
-				//the ideal value is static and can be directly added
-				attributeTypeToValue[attributes.AttributeType] = append(attributeTypeToValue[attributes.AttributeType], attributes.AttributeValue)
 			}
 		} else {
 			//unknown oppurtunity type has been encountered
 			//So we are resorting to showing the reccomendation against the resource name with the description for the oppurtunity
-			attributeTypeToValue["NoAttributeMarker"] = append(attributeTypeToValue["NoAttributeMarker"], recco.OpportunityDescription)
+			recommendationDetails = IdealAttributes{AttributeType: "NoAttributeMarker", AttributeValue: recco.OpportunityDescription}
 		}
+		attributeTypeToValue[recommendationDetails.AttributeType] = append(attributeTypeToValue[recommendationDetails.AttributeType], recommendationDetails)
 		_, exist := mapping[awsID]
 		if exist == true {
 			// awsID has multiple recommendations associated with it
 			// merge all the recommendations
 			for key, value := range attributeTypeToValue {
-				_, exits := mapping[awsID][key]
+				_, exits := mapping[awsID].Recommendation[key]
 				if exits {
 					for _, val := range value {
-						mapping[awsID][key] = append(mapping[awsID][key], val)
+						mapping[awsID].Recommendation[key] = append(mapping[awsID].Recommendation[key], val)
 					}
 				} else {
-					mapping[awsID][key] = value
+					mapping[awsID].Recommendation[key] = value
 				}
 			}
 		} else {
-			mapping[awsID] = attributeTypeToValue
+			mapping[awsID] = Recommendation{Recommendation: attributeTypeToValue}
 		}
 	}
 	return mapping
 }
 
-func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customError) {
+func (c *CloudfixManager) GetReccos() (map[string]Recommendation, *customError) {
 	//function to process the reccomendations from cloudfix and turn that into a map
 	//the structure of the map is resourceID -> Attribute type that needs to be targetted -> Ideal Attribute Value
 	// If there is no attribute that has to be targetted, attribute type would be filled with "NoAttributeMarker" and
 	//Attribute Value would be filled with any message that in the end has to be displayed to the user
 	dlog := logger.DevLogger()
 	var cloudAuth CloudfixAuth
-	mapping := make(map[string]map[string][]string)
+	mapping := make(map[string]Recommendation)
 	var reccos []byte
 	val, present := os.LookupEnv("CLOUDFIX_FILE")
 	var modeBoolval bool
@@ -216,7 +225,7 @@ func (c *CloudfixManager) GetReccos() (map[string]map[string][]string, *customEr
 		}
 		var errT *customError
 		reccos, errT = c.getReccosFromCloudfix(token)
-		
+
 		if errT != nil {
 			return mapping, errT
 		}

@@ -108,7 +108,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 	var persist Persistance
 	var cloudfixMan cloudfixIntegration.CloudfixManager
 	var terraMan TerraformManager
-	reccosFileName := "cloudfix-linter-recos.txt"
+	reccosFileName := "cloudfix-linter-recos.json"
 	reccosMapping, errC := cloudfixMan.GetReccos()
 	if errC != nil {
 		logger.Info("Something went wrong. More logs in the log directory. ", errC)
