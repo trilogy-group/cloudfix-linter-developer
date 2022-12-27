@@ -49,10 +49,6 @@ type Recommendation struct {
 	Recommendation map[string][]IdealAttributes
 }
 
-// type RecommendationDetails struct {
-// 	AttributeValue string
-// }
-
 type ErrorCodes int
 
 const (
@@ -240,7 +236,7 @@ func (c *CloudfixManager) GetReccos() (map[string]Recommendation, *customError) 
 						"Ec2IntelToAmd": {
 							"Attribute Type": "instance_type",
 							"Attribute Value": "parameters.Migrating to instance type",
-							"EnableQuickFix" : false
+							"EnableQuickFix" : true
 						},
 						"StandardToSIT": {
 							"Attribute Type": "NoAttributeMarker",
@@ -260,7 +256,7 @@ func (c *CloudfixManager) GetReccos() (map[string]Recommendation, *customError) 
 						"DuplicateCloudTrail": {
 							"Attribute Type": "enabled",
 							"Attribute Value": "false",
-							"EnableQuickFix" : false
+							"EnableQuickFix" : true
 						},
 						"UnusedEBSVolumes": {
 							"Attribute Type": "NoAttributeMarker",
@@ -325,7 +321,7 @@ func (c *CloudfixManager) GetReccos() (map[string]Recommendation, *customError) 
 						"DynamoDbInfrequentAccess": {
 							"Attribute Type": "billing_mode",
 							"Attribute Value": "PAY_PER_REQUEST",
-							"EnableQuickFix" : false
+							"EnableQuickFix" : true
 						},
 						"FixInstanceProfileForAgents": {
 							"Attribute Type": "NoAttributeMarker",
@@ -335,7 +331,7 @@ func (c *CloudfixManager) GetReccos() (map[string]Recommendation, *customError) 
 						"CloudFrontCompression": {
 							"Attribute Type": "ordered_cache_behavior.compress",
 							"Attribute Value": "true",
-							"EnableQuickFix" : false
+							"EnableQuickFix" : true
 						},
 						"ElbCleanUpIdle": {
 							"Attribute Type": "NoAttributeMarker",
