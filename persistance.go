@@ -1,8 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"os"
+
+	"github.com/trilogy-group/cloudfix-linter-developer/cloudfixIntegration"
 )
 
 type Persistance struct {
@@ -10,27 +12,18 @@ type Persistance struct {
 }
 
 //Member functions for the class follow:
-func (p *Persistance) store_reccos(reccosMap map[string]map[string][]string, fileNameForReccos string) error {
+func (p *Persistance) store_reccos(reccosMap map[string]cloudfixIntegration.Recommendation, fileNameForReccos string) error {
 	file, err := os.Create(fileNameForReccos)
+	defer file.Close()
 	if err != nil {
 		//Add error log
 		return err
 	}
-	for key, innerMap := range reccosMap {
-		for innerKey, innerList := range innerMap {
-			toWrite := fmt.Sprintf("%s->%s", key, innerKey)
-			for _, innerValue := range innerList {
-				toWrite = toWrite + fmt.Sprintf("->%s",innerValue)
-			}
-			toWrite = toWrite + "\n"
-			_, err := file.WriteString(toWrite)
-			if err != nil {
-				//Add Error Log
-				return err
-			}
-		}
+	recommendationJSON, e := json.Marshal(reccosMap)
+	if e != nil {
+		return e
 	}
-	//Add Info Log
+	file.Write(recommendationJSON)
 	return nil
 }
 
@@ -40,16 +33,10 @@ func (p *Persistance) store_tagMap(tagToIDMap map[string]map[string]string, file
 		//Add error log
 		return err
 	}
-	for key, innerMap := range tagToIDMap {
-		for innerKey, resourceId := range innerMap {
-			toWrite := fmt.Sprintf("%s->%s->%s\n", key, innerKey, resourceId)
-			_, err := file.WriteString(toWrite)
-			if err != nil {
-				//Add Error Log
-				return err
-			}
-		} 
+	recommendationJSON, e := json.Marshal(tagToIDMap)
+	if e != nil {
+		return e
 	}
-	//Add Info Log
+	file.Write(recommendationJSON)
 	return nil
 }
