@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 
 	"github.com/trilogy-group/cloudfix-linter-developer/cloudfixIntegration"
@@ -34,16 +33,10 @@ func (p *Persistance) store_tagMap(tagToIDMap map[string]map[string]string, file
 		//Add error log
 		return err
 	}
-	for key, innerMap := range tagToIDMap {
-		for innerKey, resourceId := range innerMap {
-			toWrite := fmt.Sprintf("%s->%s->%s\n", key, innerKey, resourceId)
-			_, err := file.WriteString(toWrite)
-			if err != nil {
-				//Add Error Log
-				return err
-			}
-		} 
+	recommendationJSON, e := json.Marshal(tagToIDMap)
+	if e != nil {
+		return e
 	}
-	//Add Info Log
+	file.Write(recommendationJSON)
 	return nil
 }

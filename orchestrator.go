@@ -128,7 +128,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 		panic(errP)
 	}
 	os.Setenv("ReccosMapFile", reccosFileName)
-	tagFileName := "cloudfix-linter-tagsID.txt"
+	tagFileName := "cloudfix-linter-tagsID.json"
 	tagToIDMap, errG := terraMan.getTagToIDMapping()
 	if errG != nil {
 		panic(errG)
