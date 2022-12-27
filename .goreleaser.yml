@@ -17,6 +17,7 @@ archives:
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     format: binary
     files:
-      - none*
+      - install.sh
+      - install.ps1
 checksum:
   name_template: 'checksums.txt'
