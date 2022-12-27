@@ -17,6 +17,7 @@ import (
 type IdealAttributes struct {
 	AttributeType  string `json:"Attribute Type"`
 	AttributeValue string `json:"Attribute Value"`
+	EnableQuickFix bool   `json:"EnableQuickFix"`
 }
 
 // structure for unmarshalling the reccomendation json response from cloudfix
@@ -233,95 +234,118 @@ func (c *CloudfixManager) GetReccos() (map[string]Recommendation, *customError) 
 	attrMapping := []byte(`{
 						"Gp2Gp3": {
 							"Attribute Type": "type",
-							"Attribute Value": "gp3"
+							"Attribute Value": "gp3",
+							"EnableQuickFix" : true
 						},
 						"Ec2IntelToAmd": {
 							"Attribute Type": "instance_type",
-							"Attribute Value": "parameters.Migrating to instance type"
+							"Attribute Value": "parameters.Migrating to instance type",
+							"EnableQuickFix" : false
 						},
 						"StandardToSIT": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Enable Intelligent Tiering for this S3 Block by writing a aws_s3_bucket_intelligent_tiering_configuration resource block"
+							"Attribute Value": "Enable Intelligent Tiering for this S3 Block by writing a aws_s3_bucket_intelligent_tiering_configuration resource block",
+							"EnableQuickFix" : false
 						},
 						"EfsInfrequentAccess": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
+							"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block",
+							"EnableQuickFix" : false
 						},
 						"IoToGp3": {
 							"Attribute Type": "type",
-							"Attribute Value": "gp3"
+							"Attribute Value": "gp3",
+							"EnableQuickFix" : false
 						},
 						"DuplicateCloudTrail": {
 							"Attribute Type": "enabled",
-							"Attribute Value": "false"
+							"Attribute Value": "false",
+							"EnableQuickFix" : false
 						},
 						"UnusedEBSVolumes": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Unattached EBS Volumes, Remove this to save the cost"
+							"Attribute Value": "Unattached EBS Volumes, Remove this to save the cost",
+							"EnableQuickFix" : false
 						},
 						"VpcIdleEndpoint": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Idle VPC Endpoint, Remove this to save the cost"
+							"Attribute Value": "Idle VPC Endpoint, Remove this to save the cost",
+							"EnableQuickFix" : false
 						},
 						"EfsIntelligentTiering": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block"
+							"Attribute Value": "Enable Intelligent Tiering for EFS File by declaring a sub-block called lifecycle_policy within this resource block",
+							"EnableQuickFix" : false
 						},
 						"NeptuneCleanupIdleClusters": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Idle Neptune Cluster, Remove this to save the cost"
+							"Attribute Value": "Idle Neptune Cluster, Remove this to save the cost",
+							"EnableQuickFix" : false
 						},
 						"InstallSSMAgentWindows": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Install SSM agent for Windows"
+							"Attribute Value": "Install SSM agent for Windows",
+							"EnableQuickFix" : false
 						},
 						"InstallSSMAgentLinuxMacSSH": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Install SSM agent for Mac and Linux via SSH"
+							"Attribute Value": "Install SSM agent for Mac and Linux via SSH",
+							"EnableQuickFix" : false
 						},
 						"VpcIdleNatGateway": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Idle VPC NAT Gateway, Remove this to save the cost"
+							"Attribute Value": "Idle VPC NAT Gateway, Remove this to save the cost",
+							"EnableQuickFix" : false
 						},
 						"FixVPCDNSForAgents": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "FixVPCDNSForAgents"
+							"Attribute Value": "FixVPCDNSForAgents",
+							"EnableQuickFix" : false
 						},
 						"EsOptimizeStorage": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Shrink AWS OpenSearch volumes"
+							"Attribute Value": "Shrink AWS OpenSearch volumes",
+							"EnableQuickFix" : false
 						},
 						"S3DDBTrafficToGWEndpoint": {
 							"Attribute Type": "GlobalAttributeMarker",
-							"Attribute Value": "S3/DynamoDB Traffic to Gateway Endpoint"
+							"Attribute Value": "S3/DynamoDB Traffic to Gateway Endpoint",
+							"EnableQuickFix" : false
 						},
 						"DynamoDbProvisioning": {
 							"Attribute Type": "billing_mode",
-							"Attribute Value": "PROVISIONED"
+							"Attribute Value": "PROVISIONED",
+							"EnableQuickFix" : false
 						},
 						"ArchiveOldEbsVolumeSnapshots": {
 							"Attribute Type": "GlobalAttributeMarker",
-							"Attribute Value": "Archive old EBS volume snapshots"
+							"Attribute Value": "Archive old EBS volume snapshots",
+							"EnableQuickFix" : false
 						},
 						"DynamoDbInfrequentAccess": {
 							"Attribute Type": "billing_mode",
-							"Attribute Value": "PAY_PER_REQUEST"
+							"Attribute Value": "PAY_PER_REQUEST",
+							"EnableQuickFix" : false
 						},
 						"FixInstanceProfileForAgents": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "FixInstanceProfileForAgents"
+							"Attribute Value": "FixInstanceProfileForAgents",
+							"EnableQuickFix" : false
 						},
 						"CloudFrontCompression": {
 							"Attribute Type": "ordered_cache_behavior.compress",
-							"Attribute Value": "true"
+							"Attribute Value": "true",
+							"EnableQuickFix" : false
 						},
 						"ElbCleanUpIdle": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Idle Elb, cleanup to save cost."
+							"Attribute Value": "Idle Elb, cleanup to save cost.",
+							"EnableQuickFix" : false
 						},
 						"EC2CleanupUnusedAMIs": {
 							"Attribute Type": "NoAttributeMarker",
-							"Attribute Value": "Cleanup unused AMIs"
+							"Attribute Value": "Cleanup unused AMIs",
+							"EnableQuickFix" : false
 						}
 						}`)
 	mapping = c.createMap(reccos, attrMapping)
