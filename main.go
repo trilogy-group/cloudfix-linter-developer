@@ -47,11 +47,11 @@ var (
 			logger.Info("Cloudfix-linter starting")
 			homeDir, err := os.Getwd()
 			if err != nil {
-				fmt.Println("Failed.")
+				fmt.Println(`{ "error": "Unable to find working directory"}`)
 			}
 			hclFilePath := homeDir + "/.tflint.hcl"
 			if _, err := os.Stat(hclFilePath); errors.Is(err, os.ErrNotExist) {
-				fmt.Println(`The current directory needs to be initialised. Run "cloudfix-linter init" to initialise`)
+				fmt.Println(`{ "error" : "The current directory needs to be initialised. Run "cloudfix-linter init" to initialise" }`)
 				return
 			}
 			var orches Orchestrator
@@ -65,7 +65,7 @@ var (
 		RunE: func(cmd *cobra.Command, args []string) error {
 			_, err := exec.Command(yor(), "tag", "-d", ".", "--tag-groups", "code2cloud").Output()
 			if err != nil {
-				return err
+				return errors.New(fmt.Sprintf(`{ "error" : "%s", "message" : "yor tag error" }`, err))
 			}
 			return nil
 		},
@@ -77,7 +77,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			tflintRecco, e := cmd.Flags().GetString("enableNonCloudfixRecco")
 			if e != nil {
-				fmt.Println("Failed to initialise.")
+				fmt.Println(`{ "error": "Failed to initialise", "message": "error in finding enableNonCloudfixRecco"}`)
 			}
 			var default_recco bool = true
 			if tflintRecco != "" {
@@ -87,7 +87,7 @@ var (
 			}
 			err := initDir(default_recco)
 			if err != nil {
-				fmt.Println("Failed to initialise")
+				fmt.Println(fmt.Sprintf(`{ "error" : "%s", "message" : "Failed to initialise" }`, err))
 			}
 		},
 	}
@@ -103,6 +103,6 @@ func init() {
 
 func main() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println("Error occurred while execution")
+		fmt.Println(`{ "error": "Error occurred while execution"}`)
 	}
 }
