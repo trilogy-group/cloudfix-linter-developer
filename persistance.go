@@ -27,7 +27,7 @@ func (p *Persistance) store_reccos(reccosMap map[string]cloudfixIntegration.Reco
 	return nil
 }
 
-func (p *Persistance) store_tagMap(tagToIDMap map[string]map[string]string, fileNameForTagMap string) error {
+func (p *Persistance) store_tagMap(tagToIDMap map[string]map[string][]string, fileNameForTagMap string) error {
 	file, err := os.Create(fileNameForTagMap)
 	if err != nil {
 		//Add error log

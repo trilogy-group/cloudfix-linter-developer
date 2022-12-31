@@ -27,8 +27,8 @@ func terraform() string {
 	}
 	return basePath + "/terraform"
 }
-func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]map[string]string, error) {
-	tagToID := make(map[string]map[string]string)
+func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]map[string][]string, error) {
+	tagToID := make(map[string]map[string][]string)
 	var tfState tfjson.State
 	errU := tfState.UnmarshalJSON(TfLintOutData)
 	if errU != nil {
@@ -55,7 +55,7 @@ func (t *TerraformManager) getTagToID(TfLintOutData []byte) (map[string]map[stri
 	return tagToID, nil
 }
 
-func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagToID map[string]map[string]string) {
+func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagToID map[string]map[string][]string) {
 	AWSResourceIDRaw, ok := resource.AttributeValues["id"]
 	if !ok {
 		//log that id is not present
@@ -100,14 +100,14 @@ func (t *TerraformManager) addPairToTagMap(resource *tfjson.StateResource, tagTo
 	_, exists := tagToID[yorTagTrim]
 
 	if (!exists) {
-		tagToID[yorTagTrim]= map[string]string{}
+		tagToID[yorTagTrim]= map[string][]string{}
 	}
 
-	tagToID[yorTagTrim][innerMapKey] = AWSResourceIDTrim
+	tagToID[yorTagTrim][innerMapKey] = append(tagToID[yorTagTrim][innerMapKey], AWSResourceIDTrim)
 }
 
-func (t *TerraformManager) getTagToIDMapping() (map[string]map[string]string, error) {
-	tagToID := make(map[string]map[string]string)
+func (t *TerraformManager) getTagToIDMapping() (map[string]map[string][]string, error) {
+	tagToID := make(map[string]map[string][]string)
 	var TfLintOutData []byte
 	var errT error
 	var modeBoolval bool

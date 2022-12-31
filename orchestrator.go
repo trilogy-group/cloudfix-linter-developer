@@ -125,17 +125,20 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 	}
 	errP := persist.store_reccos(reccosMapping, reccosFileName)
 	if errP != nil {
-		panic(errP)
+		fmt.Printf(`{"error": "%s"}`, errP)
+		return 
 	}
 	os.Setenv("ReccosMapFile", reccosFileName)
 	tagFileName := "cloudfix-linter-tagsID.json"
 	tagToIDMap, errG := terraMan.getTagToIDMapping()
 	if errG != nil {
-		panic(errG)
+		fmt.Printf(`{"error": "%s"}`, errP)
+		return 
 	}
 	errT := persist.store_tagMap(tagToIDMap, tagFileName)
 	if errT != nil {
-		panic(errT)
+		fmt.Printf(`{"error": "%s"}`, errT)
+		return 
 	}
 	os.Setenv("TagsMapFile", tagFileName)
 	modulesJson, _ := exec.Command(tflint(), "--only=module_source", "-f=json").Output()
@@ -158,7 +161,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 		var jsonOutRoot JSONOutput
 		errMR := json.Unmarshal(output, &jsonOutRoot)
 		if errMR != nil {
-			fmt.Println("Error getting JSON output")
+			fmt.Println(`{ "error": "Error getting JSON output" }`)
 			return
 
 		}
@@ -170,7 +173,7 @@ func (o *Orchestrator) runReccos(jsonFlag bool) {
 			var jsonOutModules JSONOutput
 			errMM := json.Unmarshal(outputM, &jsonOutModules)
 			if errMM != nil {
-				fmt.Println("Error getting JSON output")
+				fmt.Println(`{ "error": "Error getting JSON output" }`)
 				return
 			}
 			if len(jsonOutModules.Issues) != 0 {
