@@ -310,7 +310,7 @@ func (c *CloudfixManager) GetReccos() (map[string]Recommendation, *customError) 
 						},
 						"DynamoDbProvisioning": {
 							"Attribute Type": "billing_mode",
-							"Attribute Value": "Change to Provisioned",
+							"Attribute Value": "Dynamo DB Provisioning",
 							"EnableQuickFix" : false
 						},
 						"ArchiveOldEbsVolumeSnapshots": {
